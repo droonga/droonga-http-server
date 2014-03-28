@@ -1,0 +1,37 @@
+{
+  "name": "droonga-http-server",
+  "description": "An HTTP Protocol Adapter for the Droonga Engine.",
+  "version": "1.0.0",
+  "author": "Droonga project <droonga@groonga.org>",
+  "contributors": [
+    {
+      "name": "Daijiro MORI",
+      "email": "mori@groonga.org"
+    },
+    {
+      "name": "YUKI Hiroshi",
+      "email": "piro.outsider.reflex@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/droonga/droonga-http-server.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "commander": "*",
+    "express": ">=3.0",
+    "express-droonga": "1.0.0",
+    "response-time": "*"
+  },
+  "devDependencies": {
+    "express-droonga": "git://github.com/droonga/express-droonga.git#master"
+  },
+  "scripts": {
+    "start": "./application.js"
+  },
+  "main": "index",
+  "engines": {
+    "node": ">=0.8"
+  }
+}
