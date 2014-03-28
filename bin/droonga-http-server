@@ -21,6 +21,8 @@ options
           parseInt, 24224)
   .option('--default-dataset <dataset>', 'The default dataset',
           'Droonga')
+  .option('--tag <tag>', 'The tag',
+          'droonga')
   .option('--enable-logging', 'Enable logging to the standard output')
   .option('--cache-size <size>', 'The max number of cached requests',
           parseInt, 100)
@@ -54,6 +56,7 @@ application.configure(function() {
 application.droonga({
   prefix: '',
   defaultDataset: options.defaultDataset,
+  tag: options.tag,
   server: server,
   sessionStore: sessionStore, // this is required to share session information HTTP APIs
   receiveHostName: options.receiveHostName,
