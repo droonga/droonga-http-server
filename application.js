@@ -49,7 +49,7 @@ application.configure(function() {
   }
 });
 
-application.droonga{
+application.droonga({
   prefix: '',
   defaultDataset: options.defaultDataset,
   server: server,
