@@ -27,8 +27,8 @@
   "devDependencies": {
     "express-droonga": "git://github.com/droonga/express-droonga.git#master"
   },
-  "scripts": {
-    "start": "./application.js"
+  "bin": {
+    "droonga-http-server": "./bin/droonga-http-server"
   },
   "main": "index",
   "engines": {
