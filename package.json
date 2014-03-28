@@ -21,11 +21,8 @@
   "dependencies": {
     "commander": "*",
     "express": ">=3.0",
-    "express-droonga": "1.0.0",
+    "express-droonga": "*",
     "response-time": "*"
-  },
-  "devDependencies": {
-    "express-droonga": "git://github.com/droonga/express-droonga.git#master"
   },
   "bin": {
     "droonga-http-server": "./bin/droonga-http-server"
