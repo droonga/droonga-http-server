@@ -41,7 +41,7 @@ application.configure(function() {
     store:  sessionStore
   }));
   application.use(responseTime());
-  if (options.cacheSize > 0) {
+  if (droonga.cache && options.cacheSize > 0) {
     application.use(droonga.cache({
       size: options.cacheSize,
       rules: [
