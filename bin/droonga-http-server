@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// -*- js -*-
 
 var express = require('express'),
     droonga = require('express-droonga'),
