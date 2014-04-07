@@ -9,9 +9,13 @@ var express = require('express'),
 
 var version = require('../package.json').version;
 
+intOption = function(newValue, oldValue) {
+  return parseInt(newValue);
+}
+
 options
   .version(version)
-  .option('--port <port>', 'Port number', parseInt, 13000)
+  .option('--port <port>', 'Port number', intOption, 13000)
   .option('--receive-host-name <name>',
           'Host name of the protocol adapter. ' +
             'It must be resolvable by Droonga engine.',
@@ -19,7 +23,7 @@ options
   .option('--droonga-engine-host-name <name>', 'Host name of Droonga engine',
           '127.0.0.1')
   .option('--droonga-engine-port <port>', 'Port number of Droonga engine',
-          parseInt, 24224)
+          intOption, 24224)
   .option('--default-dataset <dataset>', 'The default dataset',
           'Droonga')
   .option('--tag <tag>', 'The tag',
