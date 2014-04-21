@@ -40,7 +40,8 @@ var server = http.createServer(application);
 
 var MemoryStore = session.MemoryStore;
 var sessionStore = new MemoryStore();
-application.configure(function() {
+
+
   if (options.enableLogging) {
     application.use(express.logger());
   }
@@ -72,7 +73,6 @@ application.configure(function() {
       }));
     }
   }
-});
 
 application.droonga({
   prefix: '',
