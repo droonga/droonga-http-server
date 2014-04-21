@@ -41,38 +41,37 @@ var server = http.createServer(application);
 var MemoryStore = session.MemoryStore;
 var sessionStore = new MemoryStore();
 
-
-  if (options.enableLogging) {
-    application.use(express.logger());
+if (options.enableLogging) {
+  application.use(express.logger());
+}
+application.use(cookieParser('secret key'));
+application.use(session({
+  secret: 'secret key',
+  store:  sessionStore
+}));
+application.use(responseTime());
+if (options.cacheSize > 0) {
+  var cacheMiddlewareRules = [
+    { regex: /./ }
+  ];
+  if (droonga.Cache) {
+    var cache = new droonga.Cache({
+      size: options.cacheSize,
+    });
+    application.use("/cache/statistics",
+                    droonga.middleware.cacheStatistics(cache));
+    application.use(droonga.middleware.cache(cache, {
+      rules: cacheMiddlewareRules
+    }));
+  } else if (droonga.cache) {
+    // TODO: Remove me when express-droonga 1.0.2 is released and
+    // droonga-http-server requires express-droonga 1.0.2 or later.
+    application.use(droonga.cache({
+      size: options.cacheSize,
+      rules: cacheMiddlewareRules,
+    }));
   }
-  application.use(cookieParser('secret key'));
-  application.use(session({
-    secret: 'secret key',
-    store:  sessionStore
-  }));
-  application.use(responseTime());
-  if (options.cacheSize > 0) {
-    var cacheMiddlewareRules = [
-      { regex: /./ }
-    ];
-    if (droonga.Cache) {
-      var cache = new droonga.Cache({
-        size: options.cacheSize,
-      });
-      application.use("/cache/statistics",
-                      droonga.middleware.cacheStatistics(cache));
-      application.use(droonga.middleware.cache(cache, {
-        rules: cacheMiddlewareRules
-      }));
-    } else if (droonga.cache) {
-      // TODO: Remove me when express-droonga 1.0.2 is released and
-      // droonga-http-server requires express-droonga 1.0.2 or later.
-      application.use(droonga.cache({
-        size: options.cacheSize,
-        rules: cacheMiddlewareRules,
-      }));
-    }
-  }
+}
 
 application.droonga({
   prefix: '',
