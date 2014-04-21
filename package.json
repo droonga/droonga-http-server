@@ -21,7 +21,7 @@
   "dependencies": {
     "cookie-parser": "*",
     "commander": "*",
-    "express": ">=3.0",
+    "express": ">=4.0",
     "express-droonga": "*",
     "express-session": "*",
     "response-time": "*"
