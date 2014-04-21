@@ -19,9 +19,11 @@
   },
   "license": "MIT",
   "dependencies": {
+    "cookie-parser": "*",
     "commander": "*",
     "express": ">=3.0",
     "express-droonga": "*",
+    "express-session": "*",
     "response-time": "*"
   },
   "bin": {

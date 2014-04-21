@@ -2,6 +2,8 @@
 // -*- js -*-
 
 var express = require('express'),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session'),
     droonga = require('express-droonga'),
     responseTime = require('response-time'),
     http = require('http'),
@@ -36,14 +38,14 @@ options
 var application = express();
 var server = http.createServer(application);
 
-var MemoryStore = express.session.MemoryStore;
+var MemoryStore = session.MemoryStore;
 var sessionStore = new MemoryStore();
 application.configure(function() {
   if (options.enableLogging) {
     application.use(express.logger());
   }
-  application.use(express.cookieParser('secret key'));
-  application.use(express.session({
+  application.use(cookieParser('secret key'));
+  application.use(session({
     secret: 'secret key',
     store:  sessionStore
   }));
