@@ -52,7 +52,7 @@ application.use(session({
 application.use(responseTime());
 if (options.cacheSize > 0) {
   var cacheMiddlewareRules = [
-    { regex: /./ }
+    { regex: /^\// }
   ];
   if (droonga.Cache) {
     var cache = new droonga.Cache({
