@@ -33,6 +33,8 @@ options
   .option('--enable-logging', 'Enable logging to the standard output')
   .option('--cache-size <size>', 'The max number of cached requests',
           parseInt, 100)
+  .option('--enable-trust-proxy',
+          'Enable "trust proxy" configuration. It is required when you run droonga-http-server behind a reverse proxy.')
   .parse(process.argv);
 
 var application = express();
@@ -40,6 +42,10 @@ var server = http.createServer(application);
 
 var MemoryStore = session.MemoryStore;
 var sessionStore = new MemoryStore();
+
+if (options.enableTrustProxy) {
+  application.enable('trust proxy');
+}
 
 if (options.enableLogging) {
   application.use(express.logger());
