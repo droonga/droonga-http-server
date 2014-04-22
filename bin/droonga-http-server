@@ -2,6 +2,7 @@
 // -*- js -*-
 
 var express = require('express'),
+    bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
     droonga = require('express-droonga'),
@@ -78,6 +79,8 @@ if (options.cacheSize > 0) {
     }));
   }
 }
+
+application.use(bodyParser());
 
 application.droonga({
   prefix: '',
