@@ -4,6 +4,7 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
+    morgan = require('morgan'),
     session = require('express-session'),
     droonga = require('express-droonga'),
     responseTime = require('response-time'),
@@ -49,7 +50,7 @@ if (options.enableTrustProxy) {
 }
 
 if (options.enableLogging) {
-  application.use(express.logger());
+  application.use(morgan());
 }
 application.use(cookieParser('secret key'));
 application.use(session({

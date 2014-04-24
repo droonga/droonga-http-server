@@ -25,6 +25,7 @@
     "express": ">=4.0",
     "express-droonga": "*",
     "express-session": "*",
+    "morgan": "*",
     "response-time": "*"
   },
   "bin": {
