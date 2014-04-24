@@ -33,7 +33,7 @@ options
   .option('--droonga-engine-host-name <name>', 'Host name of Droonga engine',
           '127.0.0.1')
   .option('--droonga-engine-port <port>', 'Port number of Droonga engine',
-          intOption, 24224)
+          intOption, 10031)
   .option('--default-dataset <dataset>', 'The default dataset',
           'Droonga')
   .option('--tag <tag>', 'The tag',
