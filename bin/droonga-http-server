@@ -34,7 +34,7 @@ options
           'droonga')
   .option('--enable-logging', 'Enable logging to the standard output')
   .option('--cache-size <size>', 'The max number of cached requests',
-          parseInt, 100)
+          intOption, 100)
   .option('--enable-trust-proxy',
           'Enable "trust proxy" configuration. It is required when you run droonga-http-server behind a reverse proxy.')
   .parse(process.argv);
