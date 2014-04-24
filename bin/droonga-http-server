@@ -17,6 +17,12 @@ intOption = function(newValue, oldValue) {
   return parseInt(newValue);
 }
 
+pluginsOption = function(newValue, oldValue) {
+  return newValue.split(/\s*,\s*/).map(function (plugin) {
+    return require(plugin);
+  });
+}
+
 options
   .version(version)
   .option('--port <port>', 'Port number', intOption, 13000)
@@ -37,6 +43,14 @@ options
           intOption, 100)
   .option('--enable-trust-proxy',
           'Enable "trust proxy" configuration. It is required when you run droonga-http-server behind a reverse proxy.')
+  .option('--plugins <plugin1,plugin2,...>',
+          'Use specified plugins.',
+          pluginsOption,
+          [
+            droonga.API_REST,
+            droonga.API_GROONGA,
+            droonga.API_DROONGA
+          ])
   .parse(process.argv);
 
 var application = express();
@@ -92,11 +106,7 @@ application.droonga({
   receiveHostName: options.receiveHostName,
   hostName: options.droongaEngineHostName,
   port: options.droongaEnginePort,
-  plugins: [
-    droonga.API_REST,
-    droonga.API_GROONGA,
-    droonga.API_DROONGA
-  ]
+  plugins: options.plugins
 });
 
 server.listen(options.port);
