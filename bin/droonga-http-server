@@ -40,7 +40,9 @@ options
           'Droonga')
   .option('--tag <tag>', 'The tag',
           'droonga')
-  .option('--enable-logging', 'Enable logging to the standard output')
+  .option('--access-log-file <file>',
+          'Output access logs to <file>. ' +
+            'You can use "-" as <file> to output to the standard output.')
   .option('--cache-size <size>', 'The max number of cached requests',
           intOption, 100)
   .option('--enable-trust-proxy',
@@ -76,8 +78,22 @@ if (options.enableTrustProxy) {
   application.enable('trust proxy');
 }
 
-if (options.enableLogging) {
-  application.use(morgan());
+if (options.accessLogFile) {
+  var accessLogStream;
+  if (options.accessLogFile == '-') {
+    accessLogStream = process.stdout;
+  } else {
+    var accessLogStreamOptions = {
+      flags: 'a',
+      mode: 0644
+    };
+    accessLogStream = fs.createWriteStream(options.accessLogFile,
+                                           accessLogStreamOptions);
+  }
+  var accessLogOptions = {
+    stream: accessLogStream
+  };
+  application.use(morgan(accessLogOptions));
 }
 application.use(cookieParser('secret key'));
 application.use(session({
