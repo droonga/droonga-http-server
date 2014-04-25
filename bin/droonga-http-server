@@ -2,6 +2,7 @@
 // -*- js -*-
 
 var fs = require('fs'),
+    daemon = require('daemon'),
     express = require('express'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
@@ -53,7 +54,12 @@ options
             droonga.API_DROONGA
           ])
   .option('--pid-file <pid-file>', 'Output PID to <pid-file>.')
+  .option('--daemon', 'Run as a daemon.')
   .parse(process.argv);
+
+if (options.daemon) {
+  daemon();
+}
 
 if (options.pidFile) {
   var fd = fs.openSync(options.pidFile, 'w', 0644);
