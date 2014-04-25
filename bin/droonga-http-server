@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // -*- js -*-
 
-var express = require('express'),
+var fs = require('fs'),
+    express = require('express'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     morgan = require('morgan'),
@@ -51,7 +52,13 @@ options
             droonga.API_GROONGA,
             droonga.API_DROONGA
           ])
+  .option('--pid-file <pid-file>', 'Output PID to <pid-file>.')
   .parse(process.argv);
+
+if (options.pidFile) {
+  var fd = fs.openSync(options.pidFile, 'w', 0644);
+  fs.writeSync(fd, process.pid.toString());
+}
 
 var application = express();
 var server = http.createServer(application);
