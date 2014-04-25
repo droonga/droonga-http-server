@@ -95,8 +95,6 @@ if (options.cacheSize > 0) {
   }
 }
 
-application.use(bodyParser());
-
 application.droonga({
   prefix: '',
   defaultDataset: options.defaultDataset,

@@ -19,7 +19,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "body-parser": "*",
     "cookie-parser": "*",
     "commander": "*",
     "express": ">=4.0",
