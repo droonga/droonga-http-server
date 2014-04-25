@@ -3,6 +3,7 @@
 
 var fs = require('fs'),
     daemon = require('daemon'),
+    winston = require('winston'),
     express = require('express'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
@@ -43,6 +44,9 @@ options
   .option('--access-log-file <file>',
           'Output access logs to <file>. ' +
             'You can use "-" as <file> to output to the standard output.')
+  .option('--system-log-file <file>',
+          'Output system logs to <file>. ' +
+            'You can use "-" as <file> to output to the standard output.')
   .option('--cache-size <size>', 'The max number of cached requests',
           intOption, 100)
   .option('--enable-trust-proxy',
@@ -61,6 +65,26 @@ options
 
 if (options.daemon) {
   daemon();
+}
+
+var logger;
+if (options.systemLogFile) {
+  logger = new winston.Logger({
+    transports: [
+      new winston.transports.File({
+        filename: options.systemLogFile,
+        json: false
+      })
+    ]
+  });
+} else {
+  var transports = [];
+  if (!options.daemon) {
+    transports.push(new winston.transports.Console());
+  }
+  logger = new winston.Logger({
+    transports: transports
+  });
 }
 
 if (options.pidFile) {
@@ -112,7 +136,8 @@ if (options.cacheSize > 0) {
     application.use("/statistics/cache",
                     droonga.middleware.cacheStatistics(cache));
     application.use(droonga.middleware.cache(cache, {
-      rules: cacheMiddlewareRules
+      rules: cacheMiddlewareRules,
+      logger: logger
     }));
   } else if (droonga.cache) {
     // TODO: Remove me when express-droonga 1.0.2 is released and
@@ -126,6 +151,7 @@ if (options.cacheSize > 0) {
 
 application.droonga({
   prefix: '',
+  logger: logger,
   defaultDataset: options.defaultDataset,
   tag: options.tag,
   server: server,

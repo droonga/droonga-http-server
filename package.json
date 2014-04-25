@@ -26,7 +26,8 @@
     "express-droonga": "*",
     "express-session": "*",
     "morgan": "*",
-    "response-time": "*"
+    "response-time": "*",
+    "winston": "*"
   },
   "bin": {
     "droonga-http-server": "./bin/droonga-http-server"
