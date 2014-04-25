@@ -122,10 +122,17 @@ application.droonga({
 
 server.listen(options.port);
 
-process.on('SIGINT', function() {
+function shutdown() {
   server.close();
+  if (options.pidFile && fs.existsSync(options.pidFile)) {
+    fs.unlinkSync(options.pidFile);
+  }
+}
+
+process.on('SIGINT', function() {
+  shutdown();
 });
 
 process.on('SIGTERM', function() {
-  server.close();
+  shutdown();
 });
