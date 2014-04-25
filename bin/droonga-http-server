@@ -108,3 +108,11 @@ application.droonga({
 });
 
 server.listen(options.port);
+
+process.on('SIGINT', function() {
+  server.close();
+});
+
+process.on('SIGTERM', function() {
+  server.close();
+});
