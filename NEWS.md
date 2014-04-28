@@ -1,6 +1,6 @@
 # News
 
-## 1.0.4: 2014-04-29 (planned)
+## 1.0.4: 2014-04-29
 
  * Works with the [Express 4.0](http://expressjs.com/).
  * Supports a new `--enable-trust-proxy` option to run the server behind a reverse proxy.
