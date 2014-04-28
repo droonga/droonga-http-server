@@ -58,8 +58,8 @@ options
             droonga.API_GROONGA,
             droonga.API_DROONGA
           ])
-  .option('--pid-file <pid-file>', 'Output PID to <pid-file>.')
   .option('--daemon', 'Run as a daemon.')
+  .option('--pid-file <pid-file>', 'Output PID to <pid-file>.')
   .parse(process.argv);
 
 if (options.daemon) {
@@ -88,6 +88,7 @@ if (options.systemLogFile) {
 
 if (options.pidFile) {
   var fd = fs.openSync(options.pidFile, 'w', 0644);
+  console.log(fd);
   fs.writeSync(fd, process.pid.toString());
 }
 
