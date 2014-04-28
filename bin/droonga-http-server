@@ -94,6 +94,12 @@ if (options.pidFile) {
 var application = express();
 var server = http.createServer(application);
 
+application.set('json spaces', 1);
+var env = process.env.NODE_ENV || 'development';
+if (env == 'production') {
+  application.set('json spaces', -1); // disable pretty print!
+}
+
 var MemoryStore = session.MemoryStore;
 var sessionStore = new MemoryStore();
 
