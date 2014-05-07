@@ -27,7 +27,7 @@ pluginsOption = function(newValue, oldValue) {
 
 options
   .version(version)
-  .option('--port <port>', 'Port number', intOption, 13000)
+  .option('--port <port>', 'Port number', intOption, 10041)
   .option('--receive-host-name <name>',
           'Host name of the protocol adapter. ' +
             'It must be resolvable by Droonga engine.',
