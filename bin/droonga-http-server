@@ -37,7 +37,7 @@ options
   .option('--droonga-engine-port <port>', 'Port number of Droonga engine',
           intOption, 10031)
   .option('--default-dataset <dataset>', 'The default dataset',
-          'Droonga')
+          'Default')
   .option('--tag <tag>', 'The tag',
           'droonga')
   .option('--access-log-file <file>',
