@@ -1,5 +1,12 @@
 # News
 
+## 1.0.5: 2014-05-29 (planned)
+
+ * Use `Default` as the name of the default dataset.
+   It is same to Droonga Engine's one.
+ * Use `10041` as the default port number.
+   It is same to Groonga HTTP server's one.
+
 ## 1.0.4: 2014-04-29
 
  * Works with the [Express 4.0](http://expressjs.com/).
