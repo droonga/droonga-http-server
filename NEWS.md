@@ -1,6 +1,6 @@
 # News
 
-## 1.0.5: 2014-05-29 (planned)
+## 1.0.5: 2014-05-29
 
  * Use `Default` as the name of the default dataset.
    It is same to Droonga Engine's one.
