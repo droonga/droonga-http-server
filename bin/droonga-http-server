@@ -167,6 +167,8 @@ application.droonga({
   plugins: options.plugins
 });
 
+application.use('/groonga-admin', express.static(__dirname + '../public/groonga-admin'));
+
 server.listen(options.port);
 
 function shutdown() {
