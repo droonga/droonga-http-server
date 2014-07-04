@@ -2,6 +2,7 @@
 // -*- js -*-
 
 var fs = require('fs'),
+    path = require('path'),
     daemon = require('daemon'),
     winston = require('winston'),
     express = require('express'),
@@ -167,7 +168,7 @@ application.droonga({
   plugins: options.plugins
 });
 
-application.use('/groonga-admin', express.static(__dirname + '../public/groonga-admin'));
+application.use('/groonga-admin', express.static(path.normalize(__dirname + '/../public/groonga-admin')));
 
 server.listen(options.port);
 
