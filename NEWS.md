@@ -1,5 +1,10 @@
 # News
 
+## 1.0.6: 2014-07-29 (planned)
+
+ * Provides Groonga's administration page as the document root (`/`) experimentally.
+ * Supports a new `--environment` option to override the `NODE_ENV` environment variable.
+
 ## 1.0.5: 2014-05-29
 
  * Use `Default` as the name of the default dataset.
