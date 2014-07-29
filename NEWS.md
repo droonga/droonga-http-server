@@ -1,6 +1,6 @@
 # News
 
-## 1.0.6: 2014-07-29 (planned)
+## 1.0.6: 2014-07-29
 
  * Provides Groonga's administration page as the document root (`/`) experimentally.
  * Supports a new `--environment` option to override the `NODE_ENV` environment variable.
