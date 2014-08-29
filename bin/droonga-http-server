@@ -23,6 +23,7 @@ var baseDir = defaultConfigs.baseDir;
 options.port             = defaultConfigs.port;
 options.accessLogFile    = defaultConfigs.access_log_file;
 options.systemLogFile    = defaultConfigs.system_log_file;
+options.daemon           = defaultConfigs.daemon;
 options.pidFile          = defaultConfigs.pid_file
 options.cacheSize        = defaultConfigs.cache_size;
 options.enableTrustProxy = defaultConfigs.enable_trust_proxy;
