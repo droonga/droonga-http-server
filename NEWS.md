@@ -6,6 +6,8 @@
    It must be placed into the configuration directory specified by the environment variable `DROONGA_BASE_DIR`
    (same to the directory `catalog.json` exists, if `droonga-engine` also works on the computer.)
    You don't have to run "droonga-http-server" command with many options, anymore.
+ * `droonga-http-server-stop`, a new command line utility to stop the service is available.
+   You don't need to send `SIGTERM` manually anymore.
 
 ## 1.0.6: 2014-07-29
 
