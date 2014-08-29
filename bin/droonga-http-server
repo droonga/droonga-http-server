@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser'),
     daemon       = require('daemon'),
     express      = require('express'),
     fs           = require('fs'),
+    yaml         = require('js-yaml'),
     http         = require('http'),
     morgan       = require('morgan'),
     options      = require('commander'),
@@ -15,6 +16,53 @@ var cookieParser = require('cookie-parser'),
     winston      = require('winston');
 
 var version = require('../package.json').version;
+
+var baseDir = path.resolve(process.env.DROONGA_BASE_DIR || ".");
+var configFile = path.resolve(baseDir, "droonga-http-server.yaml");
+var defaultConfigs = {};
+if (fs.existsSync(configFile)) {
+  defaultConfigs = yaml.safeLoad(fs.readFileSync(configFile, 'utf8'));
+  if (!('daemon' in defaultConfigs)) {
+    defaultConfigs.daemon   = true;
+    defaultConfigs.pid_file = 'droonga-http-server.pid';
+  }
+}
+
+function defineDefaultConfig(path, value) {
+  var slot = defaultConfigs;
+  var keys = path.split('.');
+  keys.some(function(key, index) {
+    if (index == keys.length - 1) {
+      if (key in slot)
+        value = slot[key];
+      else
+        slot[key] = value;
+    } else {
+      if (!(key in slot))
+        slot[key] = {};
+      slot = slot[key];
+    }
+  });
+  return value;
+}
+
+options.port             = defineDefaultConfig('port', 10041);
+options.accessLogFile    = defineDefaultConfig('access_log_file', '-');
+options.systemLogFile    = defineDefaultConfig('system_log_file', '-');
+options.cacheSize        = defineDefaultConfig('cache_size', 100);
+options.enableTrustProxy = defineDefaultConfig('enable_trust_proxy', false);
+options.plugins          = defineDefaultConfig('plugins', [
+  droonga.API_REST,
+  droonga.API_GROONGA,
+  droonga.API_DROONGA
+]);
+options.environment      = defineDefaultConfig('environment', process.env.NODE_ENV || 'development');
+
+options.droongaEngineHostName = defineDefaultConfig('engine.host','127.0.0.1');
+options.droongaEnginePort     = defineDefaultConfig('engine.port', 10031);
+options.tag                   = defineDefaultConfig('engine.tag', 'droonga');
+options.defaultDataset        = defineDefaultConfig('engine.default_dataset', 'Default');
+options.receiverHostName      = defineDefaultConfig('engine.receiver_host', '127.0.0.1');
 
 intOption = function(newValue, oldValue) {
   return parseInt(newValue);
@@ -26,43 +74,49 @@ pluginsOption = function(newValue, oldValue) {
   });
 }
 
-options.environment = process.env.NODE_ENV || 'development';
+options.environment = defaultConfigs.environment;
 
 options
   .version(version)
-  .option('--port <port>', 'Port number', intOption, 10041)
+  .option('--port <port>',
+          'Port number (' + options.port + ')',
+          intOption)
   .option('--receive-host-name <name>',
           'Host name of the protocol adapter. ' +
-            'It must be resolvable by Droonga engine.',
-          '127.0.0.1')
-  .option('--droonga-engine-host-name <name>', 'Host name of Droonga engine',
-          '127.0.0.1')
-  .option('--droonga-engine-port <port>', 'Port number of Droonga engine',
-          intOption, 10031)
-  .option('--default-dataset <dataset>', 'The default dataset',
-          'Default')
-  .option('--tag <tag>', 'The tag',
-          'droonga')
+            'It must be resolvable by Droonga engine. ' +
+            '(' + options.receiverHostName + ')')
+  .option('--droonga-engine-host-name <name>',
+          'Host name of Droonga engine (' + options.droongaEngineHostName + ')')
+  .option('--droonga-engine-port <port>',
+          'Port number of Droonga engine (' + options.droongaEnginePort + ')',
+          intOption)
+  .option('--default-dataset <dataset>',
+          'The default dataset (' + options.defaultDataset + ')')
+  .option('--tag <tag>',
+          'The tag (' + options.tag + ')')
   .option('--access-log-file <file>',
           'Output access logs to <file>. ' +
-            'You can use "-" as <file> to output to the standard output.')
+            'You can use "-" as <file> to output to the standard output. ' +
+            '(' + options.accessLogFile + ')')
   .option('--system-log-file <file>',
           'Output system logs to <file>. ' +
-            'You can use "-" as <file> to output to the standard output.')
-  .option('--cache-size <size>', 'The max number of cached requests',
-          intOption, 100)
+            'You can use "-" as <file> to output to the standard output. ' +
+            '(' + options.systemLogFile + ')')
+  .option('--cache-size <size>',
+          'The max number of cached requests ' +
+            '(' + options.cacheSize + ')',
+          intOption)
   .option('--enable-trust-proxy',
-          'Enable "trust proxy" configuration. It is required when you run droonga-http-server behind a reverse proxy.')
+          'Enable "trust proxy" configuration. It is required when you run droonga-http-server behind a reverse proxy. ' +
+            '(' + options.enableTrustProxy + ')')
   .option('--plugins <plugin1,plugin2,...>',
-          'Use specified plugins.',
-          pluginsOption,
-          [
-            droonga.API_REST,
-            droonga.API_GROONGA,
-            droonga.API_DROONGA
-          ])
-  .option('--daemon', 'Run as a daemon.')
-  .option('--pid-file <pid-file>', 'Output PID to <pid-file>.')
+          'Use specified plugins. ' +
+            '(' + options.plugins.join(',') + ')',
+          pluginsOption)
+  .option('--daemon',
+          'Run as a daemon. (' + options.daemon + ')')
+  .option('--pid-file <pid-file>',
+          'Output PID to <pid-file>.')
   .option('--environment <environment>',
           'Use specified environment. (' + options.environment + ')')
   .parse(process.argv);

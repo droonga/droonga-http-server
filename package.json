@@ -25,6 +25,7 @@
     "express": ">=4.0",
     "express-droonga": "*",
     "express-session": "*",
+    "js-yaml": "*",
     "morgan": "*",
     "response-time": "*",
     "winston": "*"
