@@ -32,7 +32,8 @@
     "winston": "*"
   },
   "bin": {
-    "droonga-http-server": "./bin/droonga-http-server"
+    "droonga-http-server": "./bin/droonga-http-server",
+    "droonga-http-server-stop": "./bin/droonga-http-server-stop"
   },
   "main": "index",
   "engines": {
