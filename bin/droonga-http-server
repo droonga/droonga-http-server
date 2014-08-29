@@ -63,6 +63,7 @@ options.droongaEnginePort     = defineDefaultConfig('engine.port', 10031);
 options.tag                   = defineDefaultConfig('engine.tag', 'droonga');
 options.defaultDataset        = defineDefaultConfig('engine.default_dataset', 'Default');
 options.receiverHostName      = defineDefaultConfig('engine.receiver_host', '127.0.0.1');
+options.environment           = defineDefaultConfig('environment', 'development');
 
 intOption = function(newValue, oldValue) {
   return parseInt(newValue);
@@ -73,8 +74,6 @@ pluginsOption = function(newValue, oldValue) {
     return require(plugin);
   });
 }
-
-options.environment = defaultConfigs.environment;
 
 options
   .version(version)
