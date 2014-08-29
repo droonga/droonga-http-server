@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+// -*- js -*-
+
+var fs   = require('fs'),
+    path = require('path'),
+    ps   = require('ps-node');
+
+function handleError(error) {
+  console.log('Failed to detect running droonga-http-server process.');
+  console.log(error.message);
+  process.exit(false);
+}
+
+var defaultConfigs = require('../lib/default-configs');
+try {
+  if (!defaultConfigs.pid_file)
+    throw new Error('Cannot detect the location of the PID file.');
+
+  var pidFile = path.resolve(defaultConfigs.baseDir, defaultConfigs.pid_file);
+  if (!fs.existsSync(pidFile))
+    throw new Error('There is no PID file at <' + pidFile + '>');
+
+  var pid = fs.readFileSync(pidFile, 'utf8');
+  pid = pid.trim();
+  if (!/^[1-9][0-9]*$/.test(pid))
+    throw new Error('Invalid PID <' + pid + '>');
+
+  ps.lookup({ pid: pid, psargs: 'aux' }, function(error, processes) {
+    if (error)
+      handleError(error);
+
+    try {
+      if (processes.length == 0)
+        throw new Error('No such process with the PID <' + pid + '>.');
+
+      if (!processes.some(function(foundProcess) {
+            if (foundProcess.pid != pid)
+              return false;
+
+            var commandLine = foundProcess.command.indexOf('droonga-http-server') +
+                                ' ' + foundProcess.arguments.join(' ');
+            if (commandLine.indexOf('droonga-http-server') < 0)
+              throw new Error('Not a droonga-engine process: PID <' + pid + '>  (' + commandLine + ')');
+
+            console.log('Sending SIGTERM to the process...');
+            process.kill(pid, 'SIGTERM');
+            return true;
+          })) {
+        throw new Error('Couldn\'t detect droonga-engine process with the PID <' + pid + '>.');
+      }
+    } catch(error) {
+      handleError(error);
+    }
+  });
+} catch(error) {
+  handleError(error);
+}

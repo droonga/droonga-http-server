@@ -27,6 +27,7 @@
     "express-session": "*",
     "js-yaml": "*",
     "morgan": "*",
+    "ps-node": "*",
     "response-time": "*",
     "winston": "*"
   },
