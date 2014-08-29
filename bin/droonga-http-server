@@ -217,16 +217,16 @@ if (options.cacheSize > 0) {
 }
 
 application.droonga({
-  prefix: '',
-  logger: logger,
-  defaultDataset: options.defaultDataset,
-  tag: options.tag,
-  server: server,
-  sessionStore: sessionStore, // this is required to share session information HTTP APIs
+  prefix:          '',
+  logger:          logger,
+  defaultDataset:  options.defaultDataset,
+  tag:             options.tag,
+  server:          server,
+  sessionStore:    sessionStore, // this is required to share session information HTTP APIs
   receiveHostName: options.receiveHostName,
-  hostName: options.droongaEngineHostName,
-  port: options.droongaEnginePort,
-  plugins: options.plugins
+  hostName:        options.droongaEngineHostName,
+  port:            options.droongaEnginePort,
+  plugins:         options.plugins
 });
 
 server.listen(options.port);
