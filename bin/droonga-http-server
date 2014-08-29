@@ -126,7 +126,8 @@ if (options.daemon) {
 }
 
 var logger;
-if (options.systemLogFile) {
+if (options.systemLogFile && options.systemLogFile != '-') {
+  options.systemLogFile = path.resolve(baseDir, options.systemLogFile);
   logger = new winston.Logger({
     transports: [
       new winston.transports.File({
@@ -146,6 +147,7 @@ if (options.systemLogFile) {
 }
 
 if (options.pidFile) {
+  options.pidFile = path.resolve(baseDir, options.pidFile);
   var fd = fs.openSync(options.pidFile, 'w', 0644);
   fs.writeSync(fd, process.pid.toString());
 }
@@ -174,6 +176,7 @@ if (options.accessLogFile) {
       flags: 'a',
       mode: 0644
     };
+    options.accessLogFile = path.resolve(baseDir, options.accessLogFile);
     accessLogStream = fs.createWriteStream(options.accessLogFile,
                                            accessLogStreamOptions);
   }
