@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 // -*- js -*-
 
-var fs = require('fs'),
-    path = require('path'),
-    daemon = require('daemon'),
-    winston = require('winston'),
-    express = require('express'),
-    cookieParser = require('cookie-parser'),
-    morgan = require('morgan'),
-    session = require('express-session'),
-    droonga = require('express-droonga'),
+var cookieParser = require('cookie-parser'),
+    droonga      = require('express-droonga'),
+    daemon       = require('daemon'),
+    express      = require('express'),
+    fs           = require('fs'),
+    http         = require('http'),
+    morgan       = require('morgan'),
+    options      = require('commander'),
+    path         = require('path'),
     responseTime = require('response-time'),
-    http = require('http'),
-    options = require('commander');
+    session      = require('express-session'),
+    winston      = require('winston');
 
 var version = require('../package.json').version;
 
