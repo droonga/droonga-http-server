@@ -16,54 +16,23 @@ var cookieParser = require('cookie-parser'),
     winston      = require('winston');
 
 var version = require('../package.json').version;
+var defaultConfigs = require('../lib/default-configs');
 
-var baseDir = path.resolve(process.env.DROONGA_BASE_DIR || ".");
-var configFile = path.resolve(baseDir, "droonga-http-server.yaml");
-var defaultConfigs = {};
-if (fs.existsSync(configFile)) {
-  defaultConfigs = yaml.safeLoad(fs.readFileSync(configFile, 'utf8'));
-  if (!('daemon' in defaultConfigs)) {
-    defaultConfigs.daemon   = true;
-    defaultConfigs.pid_file = 'droonga-http-server.pid';
-  }
-}
+var baseDir = defaultConfigs.baseDir;
 
-function defineDefaultConfig(path, value) {
-  var slot = defaultConfigs;
-  var keys = path.split('.');
-  keys.some(function(key, index) {
-    if (index == keys.length - 1) {
-      if (key in slot)
-        value = slot[key];
-      else
-        slot[key] = value;
-    } else {
-      if (!(key in slot))
-        slot[key] = {};
-      slot = slot[key];
-    }
-  });
-  return value;
-}
+options.port             = defaultConfigs.port;
+options.accessLogFile    = defaultConfigs.access_log_file;
+options.systemLogFile    = defaultConfigs.system_log_file;
+options.cacheSize        = defaultConfigs.cache_size;
+options.enableTrustProxy = defaultConfigs.enable_trust_proxy;
+options.plugins          = defaultConfigs.plugins;
+options.environment      = defaultConfigs.environment;
 
-options.port             = defineDefaultConfig('port', 10041);
-options.accessLogFile    = defineDefaultConfig('access_log_file', '-');
-options.systemLogFile    = defineDefaultConfig('system_log_file', '-');
-options.cacheSize        = defineDefaultConfig('cache_size', 100);
-options.enableTrustProxy = defineDefaultConfig('enable_trust_proxy', false);
-options.plugins          = defineDefaultConfig('plugins', [
-  droonga.API_REST,
-  droonga.API_GROONGA,
-  droonga.API_DROONGA
-]);
-options.environment      = defineDefaultConfig('environment', process.env.NODE_ENV || 'development');
-
-options.droongaEngineHostName = defineDefaultConfig('engine.host','127.0.0.1');
-options.droongaEnginePort     = defineDefaultConfig('engine.port', 10031);
-options.tag                   = defineDefaultConfig('engine.tag', 'droonga');
-options.defaultDataset        = defineDefaultConfig('engine.default_dataset', 'Default');
-options.receiverHostName      = defineDefaultConfig('engine.receiver_host', '127.0.0.1');
-options.environment           = defineDefaultConfig('environment', 'development');
+options.droongaEngineHostName = defaultConfigs.engine.host;
+options.droongaEnginePort     = defaultConfigs.engine.port;
+options.tag                   = defaultConfigs.engine.tag;
+options.defaultDataset        = defaultConfigs.engine.default_dataset;
+options.receiverHostName      = defaultConfigs.engine.receiver_host;
 
 intOption = function(newValue, oldValue) {
   return parseInt(newValue);
