@@ -46,6 +46,7 @@ install_in_debian() {
   # set up service
   [ ! -e /etc/init.d/$NAME ] &&
     curl -o /etc/init.d/$NAME $SCRIPT_URL/debian/$NAME
+  chmod +x /etc/init.d/$NAME
   update-rc.d $NAME defaults
 }
 
