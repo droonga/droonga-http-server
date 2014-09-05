@@ -51,7 +51,7 @@ install_in_debian() {
 }
 
 install_in_centos() {
-  yum update
+  yum -y update
   yum -y install npm
   npm install -g droonga-http-server
 
