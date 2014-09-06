@@ -11,7 +11,10 @@
 NAME=droonga-http-server
 DAEMON=/usr/bin/$NAME
 export DROONGA_BASE_DIR=/home/$NAME/droonga
-DAMON_ARGS="--daemon --pid-file=$NAME"
+PID_FILE=$DROONGA_BASE_DIR/$NAME.pid
+DAEMON_ARGS="--daemon --pid-file=$PID_FILE"
+
+[ -x $DAEMON ] || exit 0
 
 start() {
 	echo -n "Starting $NAME: "
