@@ -9,7 +9,7 @@
 . /etc/init.d/functions
 
 NAME=droonga-http-server
-DAEMON=/usr/local/bin/$NAME
+DAEMON=/usr/bin/$NAME
 export DROONGA_BASE_DIR=/home/$NAME/droonga
 DAMON_ARGS="--daemon --pid-file=$NAME"
 
