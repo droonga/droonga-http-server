@@ -26,7 +26,7 @@ start() {
 
 stop() {
 	echo -n "Shutting down $NAME: "
-  killproc $DAEMON
+  killproc -p $PID_FILE $DAEMON
   RET_CODE=$?
 	rm -f /var/lock/subsys/$NAME
 	return $RET_CODE
