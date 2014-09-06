@@ -52,6 +52,7 @@ install_in_debian() {
 
 install_in_centos() {
   yum -y update
+  yum -y install epel-release
   yum -y install npm
   npm install -g droonga-http-server
 
