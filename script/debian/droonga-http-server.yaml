@@ -1,12 +1,12 @@
-port:
+port: 10041
 access_log_file: droogna-http-server.access.log
 system_log_file: droonga-http-server.system.log
 cache_size: 100
 enable_trust_proxy: false
 environment: production
 engine:
-  host:
-  port:
-  default_dataset:
-  tag:
-  receiver_host:
+  host: 127.0.0.1
+  port: 10031
+  default_dataset: Default
+  tag: droonga
+  receiver_host: 127.0.0.1
