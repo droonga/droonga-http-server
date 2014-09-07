@@ -51,6 +51,10 @@ install_in_debian() {
 }
 
 install_in_centos() {
+  #TODO: We have to take care of a case when EPEL is already activated.
+  #      If EPEL is not activated, we have to activate it temporally
+  #      and disable it after installation.
+  #      Otherwise we should not do anything around EPEL.
   yum -y update
   yum -y install epel-release
   yum -y install npm
