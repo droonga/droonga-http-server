@@ -135,7 +135,7 @@ install_in_centos() {
 
   setup_configuration_directory centos
 
-  install_service_script /etc/rc.d/init.d/$NAME centos
+  install_service_script /etc/init.d/$NAME debian
   /sbin/chkconfig --add $NAME
 }
 
