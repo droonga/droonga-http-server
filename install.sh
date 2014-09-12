@@ -110,7 +110,7 @@ install_in_debian() {
   setup_configuration_directory debian
 
   # set up service
-  install_service_script /etc/rc.d/init.d/$NAME debian
+  install_service_script /etc/init.d/$NAME debian
   update-rc.d $NAME defaults
 }
 
@@ -135,7 +135,7 @@ install_in_centos() {
 
   setup_configuration_directory centos
 
-  install_service_script /etc/init.d/$NAME debian
+  install_service_script /etc/rc.d/init.d/$NAME centos
   /sbin/chkconfig --add $NAME
 }
 
