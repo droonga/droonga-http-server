@@ -27,8 +27,8 @@ DROONGA_BASE_DIR=/home/$USER/droonga
 
 EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#master
 
-if [ "$INSTALL_VERSION" = "" ]; then
-  export INSTALL_VERSION=release
+if [ "$VERSION" = "" ]; then
+  export VERSION=release
 fi
 
 case $(uname) in
@@ -96,7 +96,7 @@ install_in_debian() {
   apt-get update
   apt-get -y upgrade
   apt-get install -y nodejs nodejs-legacy npm
-  if [ "$INSTALL_VERSION" = "master" ]; then
+  if [ "$VERSION" = "master" ]; then
     echo "Installing $NAME from the git repository..."
     apt-get install -y git
     install_master
@@ -122,7 +122,7 @@ install_in_centos() {
   yum -y update
   yum -y install epel-release
   yum -y install npm
-  if [ "$INSTALL_VERSION" = "master" ]; then
+  if [ "$VERSION" = "master" ]; then
     echo "Installing $NAME from the git repository..."
     yum -y install git
     install_master
