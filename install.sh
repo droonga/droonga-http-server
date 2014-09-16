@@ -29,9 +29,9 @@ DROONGA_BASE_DIR=/home/$USER/droonga
 
 EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#master
 
-[ "$VERSION" = "" ] && VERSION="release"
-[ "$HOST" = "" ] && HOST="Auto Detect"
-[ "$ENGINE_HOST" = "" ] && ENGINE_HOST="Auto Detect"
+: ${VERSION:=release}
+: ${HOST:=Auto Detect}
+: ${ENGINE_HOST:=Auto Detect}
 
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
