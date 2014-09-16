@@ -17,7 +17,9 @@
 #   Install a release version:
 #     curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo bash
 #   Install the latest revision from the repository:
-#     curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo INSTALL_VERSION=master bash
+#     curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo VERSION=master bash
+#   Install without prompt for the hostname:
+#     curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo HOST=xxx.xxx.xxx.xxx ENGINE_HOST=xxx.xxx.xxx.xxx bash
 
 NAME=droonga-http-server
 SCRIPT_URL=https://raw.githubusercontent.com/droonga/$NAME/master/install
@@ -27,14 +29,18 @@ DROONGA_BASE_DIR=/home/$USER/droonga
 
 EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#master
 
-if [ "$VERSION" = "" ]; then
-  export VERSION=release
-fi
+[ "$VERSION" = "" ] && VERSION="release"
+[ "$HOST" = "" ] && HOST="Auto Detect"
+[ "$ENGINE_HOST" = "" ] && ENGINE_HOST="Auto Detect"
 
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
   *)                   sed="sed -r" ;;
 esac
+
+exist_command() {
+  type "$1" > /dev/null 2>&1
+}
 
 exist_user() {
   id "$1" > /dev/null 2>&1
@@ -42,6 +48,8 @@ exist_user() {
 
 prepare_user() {
   if ! exist_user $USER; then
+    echo ""
+    echo "Preparing the user..."
     useradd -m $USER
   fi
 }
@@ -49,16 +57,116 @@ prepare_user() {
 setup_configuration_directory() {
   PLATFORM=$1
 
+  echo ""
+  echo "Setting up the configuration directory..."
+
   [ ! -e $DROONGA_BASE_DIR ] &&
     mkdir $DROONGA_BASE_DIR
-  [ ! -e $DROONGA_BASE_DIR/$NAME.yaml ] &&
-    curl -o $DROONGA_BASE_DIR/$NAME.yaml $SCRIPT_URL/$PLATFORM/$NAME.yaml
+
+  config_file="$DROONGA_BASE_DIR/$NAME.yaml"
+  if [ ! -e $config_file ]; then
+    if [ "$ENGINE_HOST" = "Auto Detect" ]; then
+      ENGINE_HOST=""
+      engine_config="/home/droonga-engine/droonga/droonga-engine.yaml"
+      if [ -e $engine_config ]; then
+        ENGINE_HOST=$(cat $engine_config | grep -E "^ *host *:" | \
+                      cut -d ":" -f 2 | $sed -e "s/^ +| +\$//g")
+      fi
+      if [ "$ENGINE_HOST" != "" ]; then
+        echo "The droonga-engine service is detected on this node. The droonga-http-server is configured to be connected to this node ($ENGINE_HOST)."
+      else
+        input_hostname \
+          "Enter a host name or an IP address of the droonga-engine to be connected" &&
+        HOST=$TYPED_HOSTNAME
+      fi
+    fi
+
+    [ "$HOST" = "Auto Detect" ] &&
+      determine_hostname \
+        "If this node has a global host name or a global IP address, then choose \"Manual Input\" and type it. Otherwise, choose a preferred IP address which can be accessed from the droonga-engine node." \
+        "Enter a global host name or a global IP address for this node" &&
+      HOST=$DETERMINED_HOSTNAME
+
+    curl -o $config_file.template $SCRIPT_URL/$PLATFORM/$NAME.yaml
+    cat $config_file.template | \
+      $sed -e "s/\\\$engine_hostname/$ENGINE_HOST/" \
+           -e "s/\\\$receiver_hostname/$HOST/" \
+      > $config_file
+    rm $config_file.template
+  fi
+
   chown -R $USER.$USER $DROONGA_BASE_DIR
 }
 
+
+get_addresses_with_interface() {
+  if exist_command ip; then
+    ip addr | grep "inet " | \
+      $sed -e "s/^ *inet ([0-9\.]+).+ ([^ ]+)\$/\1 \2/"
+    return 0
+  fi
+
+  if exist_command ifconfig; then
+    interfaces=$(ifconfig -s | cut -d " " -f 1 | tail -n +2)
+    for interface in $interfaces; do
+      address=$(LANG=C ifconfig $interface | grep "inet addr" | \
+                $sed -e "s/^ *inet addr:([0-9\.]+).+\$/\1/")
+      if [ "$address" != "" ]; then
+        echo $address $interface
+      fi
+    done
+    return 0
+  fi
+
+  echo "127.0.0.1 lo"
+  return 0
+}
+
+determine_hostname() {
+  prompt_for_suggestions="$1"
+  prompt_for_manual_input="$2"
+
+  if [ $(get_addresses_with_interface | wc -l) -eq 1 ]; then
+    DETERMINED_HOSTNAME=$(get_addresses_with_interface | cut -d " " -f 1)
+    return 0
+  fi
+
+  PS3="$prompt_for_suggestions: "
+  select chosen in $(get_addresses_with_interface | \
+                     $sed -e "s/ (.+)\$/(\1)/") "Manual Input"
+  do
+    if [ -z "$chosen" ]; then
+      continue
+    else
+      DETERMINED_HOSTNAME=$(echo $chosen | cut -d "(" -f 1)
+      break
+    fi
+  done
+
+  if [ "$DETERMINED_HOSTNAME" = "Manual Input" ]; then
+    input_hostname "$prompt_for_manual_input" &&
+      DETERMINED_HOSTNAME="$TYPED_HOSTNAME"
+  fi
+
+  return 0
+}
+
+input_hostname() {
+  prompt="$1: "
+  echo -n "$prompt"
+  while read TYPED_HOSTNAME; do
+    if [ "$TYPED_HOSTNAME" != "" ]; then break; fi
+    echo -n "$prompt"
+  done
+  return 0
+}
+
+
 use_master_express_droonga() {
   mv package.json package.json.bak
-  cat package.json.bak | $sed -e "s;(express-droonga.+)\*;\1$EXPRESS_DROONGA_REPOSITORY_URL;" > package.json
+  cat package.json.bak | \
+    $sed -e "s;(express-droonga.+)\*;\1$EXPRESS_DROONGA_REPOSITORY_URL;" \
+    > package.json
 }
 
 install_master() {
@@ -96,6 +204,9 @@ install_in_debian() {
   apt-get update
   apt-get -y upgrade
   apt-get install -y nodejs nodejs-legacy npm
+
+  echo ""
+
   if [ "$VERSION" = "master" ]; then
     echo "Installing $NAME from the git repository..."
     apt-get install -y git
@@ -109,7 +220,8 @@ install_in_debian() {
   
   setup_configuration_directory debian
 
-  # set up service
+  echo ""
+  echo "Registering $NAME as a service..."
   install_service_script /etc/init.d/$NAME debian
   update-rc.d $NAME defaults
 }
@@ -122,6 +234,9 @@ install_in_centos() {
   yum -y update
   yum -y install epel-release
   yum -y install npm
+
+  echo ""
+
   if [ "$VERSION" = "master" ]; then
     echo "Installing $NAME from the git repository..."
     yum -y install git
@@ -135,6 +250,8 @@ install_in_centos() {
 
   setup_configuration_directory centos
 
+  echo ""
+  echo "Registering $NAME as a service..."
   install_service_script /etc/rc.d/init.d/$NAME centos
   /sbin/chkconfig --add $NAME
 }
@@ -145,5 +262,9 @@ elif [ -e /etc/centos-release ]; then
   install_in_centos
 else
   echo "Not supported platform. This script works only for Debian or CentOS."
-  return 255
+  exit 255
 fi
+
+echo ""
+echo "Successfully installed $NAME."
+exit 0

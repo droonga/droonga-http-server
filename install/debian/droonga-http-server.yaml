@@ -5,8 +5,8 @@ cache_size: 100
 enable_trust_proxy: false
 environment: production
 engine:
-  host: 127.0.0.1
+  host: $engine_hostname
   port: 10031
   default_dataset: Default
   tag: droonga
-  receiver_host: 127.0.0.1
+  receiver_host: $receiver_hostname
