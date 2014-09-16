@@ -89,8 +89,8 @@ setup_configuration_directory() {
         echo "The droonga-http-server is configured to be connected"
         echo "to this node ($ENGINE_HOST)."
       else
-        if [ "$HOST" = "" ]; then
-          HOST=$(hostname)
+        if [ "$ENGINE_HOST" = "" ]; then
+          ENGINE_HOST=$(hostname)
           echo "********************** CAUTION!! **********************"
           echo "Installation process coudln't detect the hostname of"
           echo "the droonga-engine node to be connected."
