@@ -92,11 +92,13 @@ setup_configuration_directory() {
         HOST=$TYPED_HOSTNAME
       fi
     fi
+    echo "This node is configured to connect to the droonga-engine node $ENGINE_HOST."
 
     [ "$HOST" = "Auto Detect" ] &&
       determine_hostname \
         "Enter a host name or an IP address which is accessible from the droonga-engine node" &&
       HOST=$DETERMINED_HOSTNAME
+    echo "This node is configured with a hostname $HOST."
 
     curl -o $config_file.template $SCRIPT_URL/$PLATFORM/$NAME.yaml
     cat $config_file.template | \
