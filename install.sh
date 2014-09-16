@@ -167,10 +167,8 @@ use_master_express_droonga() {
 }
 
 install_master() {
-  [ ! -e $DROONGA_BASE_DIR ] &&
-    mkdir $DROONGA_BASE_DIR
-
-  cd $DROONGA_BASE_DIR
+  tempdir=/tmp/install-$NAME
+  cd $tempdir
 
   if [ -d $NAME ]
   then
