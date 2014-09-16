@@ -245,7 +245,7 @@ install_in_centos() {
     # the system administrator won't expect to use it
     # in his daily use.
     epel_repo=/etc/yum.repos.d/epel.repo
-    backup=/tmp/$(basename $file).bak
+    backup=/tmp/$(basename $epel_repo).bak
     mv $epel_repo $backup
     cat $backup | $sed -e "s/enabled=1/enabled=0/" \
       > $epel_repo
