@@ -170,6 +170,11 @@ use_master_express_droonga() {
 }
 
 install_master() {
+  [ ! -e $DROONGA_BASE_DIR ] &&
+    mkdir $DROONGA_BASE_DIR
+
+  cd $DROONGA_BASE_DIR
+
   if [ -d $NAME ]
   then
     cd $NAME
