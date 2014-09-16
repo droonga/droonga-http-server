@@ -90,9 +90,9 @@ setup_configuration_directory() {
         input_hostname \
           "Enter a host name or an IP address of the droonga-engine to be connected" &&
         HOST=$TYPED_HOSTNAME
+        echo "This node is configured to connect to the droonga-engine node $ENGINE_HOST."
       fi
     fi
-    echo "This node is configured to connect to the droonga-engine node $ENGINE_HOST."
 
     [ "$HOST" = "Auto Detect" ] &&
       determine_hostname \
