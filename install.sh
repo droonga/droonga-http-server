@@ -85,19 +85,41 @@ setup_configuration_directory() {
                       cut -d ":" -f 2 | $sed -e "s/^ +| +\$//g")
       fi
       if [ "$ENGINE_HOST" != "" ]; then
-        echo "The droonga-engine service is detected on this node. The droonga-http-server is configured to be connected to this node ($ENGINE_HOST)."
+        echo "The droonga-engine service is detected on this node."
+        echo "The droonga-http-server is configured to be connected"
+        echo "to this node ($ENGINE_HOST)."
       else
-        input_hostname \
-          "Enter a host name or an IP address of the droonga-engine to be connected" &&
-        HOST=$TYPED_HOSTNAME
+        if [ "$HOST" = "" ]; then
+          HOST=$(hostname)
+          echo "********************** CAUTION!! **********************"
+          echo "Installation process coudln't detect the hostname of"
+          echo "the droonga-engine node to be connected."
+          echo "You may have to configure following file manually"
+          echo "to refer a valid accessible hostname of an existing"
+          echo "droonga-engine node:"
+          echo ""
+          echo "  $DROONGA_BASE_DIR/$NAME.yaml"
+          echo "*******************************************************"
+        fi
         echo "This node is configured to connect to the droonga-engine node $ENGINE_HOST."
       fi
     fi
 
     [ "$HOST" = "Auto Detect" ] &&
-      determine_hostname \
-        "Enter a host name or an IP address which is accessible from the droonga-engine node" &&
-      HOST=$DETERMINED_HOSTNAME
+      determine_hostname &&
+        HOST=$DETERMINED_HOSTNAME
+
+    if [ "$HOST" = "" ]; then
+      HOST=$(hostname)
+      echo "********************** CAUTION!! **********************"
+      echo "Installation process coudln't detect the hostname of"
+      echo "this node, which is accessible from other nodes."
+      echo "You may have to configure following file manually"
+      echo "to refer a valid accessible hostname for this node:"
+      echo ""
+      echo "  $DROONGA_BASE_DIR/$NAME.yaml"
+      echo "*******************************************************"
+    fi
     echo "This node is configured with a hostname $HOST."
 
     curl -o $config_file.template $SCRIPT_URL/$PLATFORM/$NAME.yaml
@@ -126,8 +148,6 @@ guess_global_hostname() {
 }
 
 determine_hostname() {
-  prompt_for_manual_input="$1"
-
   global_hostname=$(guess_global_hostname)
   if [ "$global_hostname" != "" ]; then
     DETERMINED_HOSTNAME="$global_hostname"
@@ -144,18 +164,8 @@ determine_hostname() {
     return 0
   fi
 
-  input_hostname "$prompt_for_manual_input" &&
-    DETERMINED_HOSTNAME="$TYPED_HOSTNAME"
-
-  return 0
-}
-
-input_hostname() {
-  prompt="$1: "
-  while read -p "$prompt" TYPED_HOSTNAME </dev/tty; do
-    if [ "$TYPED_HOSTNAME" != "" ]; then break; fi
-  done
-  return 0
+  DETERMINED_HOSTNAME=""
+  return 1
 }
 
 
