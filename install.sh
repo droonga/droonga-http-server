@@ -14,12 +14,24 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 # Usage:
+#
+#  Ubuntu:
+#
 #   Install a release version:
-#     curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo bash
+#     $ curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo bash
 #   Install the latest revision from the repository:
-#     curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo VERSION=master bash
+#     $ curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo VERSION=master bash
 #   Install without prompt for the hostname:
-#     curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo HOST=xxx.xxx.xxx.xxx ENGINE_HOST=xxx.xxx.xxx.xxx bash
+#     $ curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | sudo HOST=xxx.xxx.xxx.xxx ENGINE_HOST=xxx.xxx.xxx.xxx bash
+#
+#  CentOS 7:
+#
+#   Install a release version:
+#     # curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | bash
+#   Install the latest revision from the repository:
+#     # curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | VERSION=master bash
+#   Install without prompt for the hostname:
+#      #curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | HOST=xxx.xxx.xxx.xxx ENGINE_HOST=xxx.xxx.xxx.xxx bash
 
 NAME=droonga-http-server
 SCRIPT_URL=https://raw.githubusercontent.com/droonga/$NAME/master/install
