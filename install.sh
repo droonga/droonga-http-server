@@ -168,6 +168,7 @@ use_master_express_droonga() {
 
 install_master() {
   tempdir=/tmp/install-$NAME
+  mkdir $tempdir
   cd $tempdir
 
   if [ -d $NAME ]
