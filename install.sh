@@ -54,6 +54,10 @@ exist_command() {
   type "$1" > /dev/null 2>&1
 }
 
+exist_yum_repository() {
+  yum "$1" | grep --quiet epel
+}
+
 exist_user() {
   id "$1" > /dev/null 2>&1
 }
@@ -238,7 +242,7 @@ install_in_debian() {
 }
 
 install_in_centos() {
-  if ! yum repolist | grep --quiet epel; then
+  if ! exist_yum_repository epel; then
     # epel-release is not installed, so install it.
     yum -y install epel-release
     # however, we should disable it by default because.
