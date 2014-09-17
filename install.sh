@@ -31,7 +31,7 @@
 #   Install the latest revision from the repository:
 #     # curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | VERSION=master bash
 #   Install without prompt for the hostname:
-#      #curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | HOST=xxx.xxx.xxx.xxx ENGINE_HOST=xxx.xxx.xxx.xxx bash
+#     # curl https://raw.githubusercontent.com/droonga/droonga-http-server/master/install.sh | HOST=xxx.xxx.xxx.xxx ENGINE_HOST=xxx.xxx.xxx.xxx bash
 
 NAME=droonga-http-server
 SCRIPT_URL=https://raw.githubusercontent.com/droonga/$NAME/master/install
