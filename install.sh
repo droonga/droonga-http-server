@@ -55,7 +55,7 @@ exist_command() {
 }
 
 exist_yum_repository() {
-  yum "$1" | grep --quiet epel
+  yum repolist | grep --quiet "$1"
 }
 
 exist_user() {
