@@ -238,7 +238,7 @@ install_in_debian() {
 }
 
 install_in_centos() {
-  if [ $(yum repolist | grep epel | wc -l) -lt 1 ]; then
+  if ! yum repolist | grep --quiet epel; then
     # epel-release is not installed, so install it.
     yum -y install epel-release
     # however, we should disable it by default because.
