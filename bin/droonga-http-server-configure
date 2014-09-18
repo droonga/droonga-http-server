@@ -199,7 +199,12 @@ function tryResetStringConfigs(callback) {
     cacheSize:             'maximum size of the response cache',
     environment:           'environment'
   };
-  if (!installedAsService) {
+  if (installedAsService) {
+    options.accessLogFile = 'droonga-http-server.access.log';
+    options.systemLogFile = 'droonga-http-server.system.log';
+    options.environment = 'production';
+  }
+  else {
     if (options.quiet)
       configValues.pidFile = defaultConfigs.pid_file;
     else if (options.pidFileGiven)
