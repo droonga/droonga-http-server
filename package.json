@@ -29,6 +29,7 @@
     "morgan": "*",
     "ps-node": "*",
     "response-time": "*",
+    "touch": "*",
     "winston": "*"
   },
   "bin": {
