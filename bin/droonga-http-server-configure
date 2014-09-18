@@ -21,8 +21,8 @@ function checkInstalledAsService(callback) {
   exec('service droonga-http-server status', function(error, stdin, stdout) {
     if (error) {
       exec('SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status', function(error, stdin, stdout) {
-        installedAsService = stdout.indexOf('running') > -1 ||
-                             stdout.indexOf('droonga-http-server is stopped') > -1;
+        installedAsService = stdin.indexOf('running') > -1 ||
+                             stdin.indexOf('droonga-http-server is stopped') > -1;
         callback(installedAsService);
       });
     }
