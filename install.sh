@@ -121,7 +121,7 @@ setup_configuration_directory() {
       echo ""
       if [ "$should_reconfigure_engine_host" = "true" ]; then
         echo " * the hostname of the droonga-engine node to be connected"
-      end
+      fi
       if [ "$should_reconfigure_host" = "true" ]; then
         echo " * the hostname of this node, which is accessible from "
         echo "   other nodes"
