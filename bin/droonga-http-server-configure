@@ -292,7 +292,7 @@ function finish() {
 
 checkInstalledAsService(function() {
   if (installedAsService)
-    process.env.DROONGA_BASE_DIR = serviceBaseDir;
+    process.env.DROONGA_BASE_DIR = defaultConfigs.baseDir = serviceBaseDir;
 
   baseDir = defaultConfigs.baseDir;
 
