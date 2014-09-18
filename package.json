@@ -31,6 +31,7 @@
     "ps-node": "*",
     "response-time": "*",
     "touch": "*",
+    "uid-number": "*",
     "winston": "*"
   },
   "bin": {
