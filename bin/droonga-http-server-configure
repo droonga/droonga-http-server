@@ -104,13 +104,15 @@ function startService(callback) {
   if (installedAsService) {
     exec('service droonga-http-server start',
          function(error, stdin, stdout) {
-           callback();
+           if (callback)
+             callback();
          });
   }
   else {
     console.log("The droonga-http-server service is still stopped.");
     console.log("You need to start the service again manually.");
-    callback();
+    if (callback)
+      callback();
   }
 }
 
