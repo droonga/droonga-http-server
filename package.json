@@ -27,6 +27,7 @@
     "express-session": "*",
     "js-yaml": "*",
     "morgan": "*",
+    "promptly": "*",
     "ps-node": "*",
     "response-time": "*",
     "touch": "*",
