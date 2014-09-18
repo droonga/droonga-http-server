@@ -46,7 +46,7 @@ function ensureHaveWritePermission(callback) {
       process.exit(false)
       return;
     }
-    fs.unlink(testFile);
+    fs.unlinkSync(testFile);
     callback(null);
   });
 }
