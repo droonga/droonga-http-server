@@ -1,0 +1,312 @@
+#!/usr/bin/env node
+// -*- js -*-
+
+var commander = require('commander'),
+    exec      = require('child_process').exec,
+    fs        = require('fs'),
+    path      = require('path'),
+    touch     = require('touch');
+
+var defaultConfigs = require('../lib/default-configs');
+
+var serviceUserName    = 'droonga-http-server';
+var serviceBaseDir     = '/home/' + serviceUserName + '/droonga';
+
+var options            = null;
+var baseDir            = null;
+var installedAsService = false;
+var running            = false;
+
+function checkInstalledAsService(callback) {
+  exec('service droonga-http-server status', function(error, stdin, stdout) {
+    if (error) {
+      exec('SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status', function(error, stdin, stdout) {
+        installedAsService = stdout.indexOf('running') > -1 ||
+                             stdout.indexOf('droonga-http-server is stopped') > -1;
+        callback(installedAsService);
+      });
+    }
+    else {
+      installedAsService = true;
+      callback(installedAsService);
+    }
+  });
+}
+
+function ensureHaveWritePermission(callback) {
+  testFile = baseDir + '/' + Time.now() + '.test';
+  touch(testFile, {}, function(error) {
+    if (error || !fs.existsSync(testFile)) {
+      console.log('You have no permission to write files under ' +
+                    '<' + baseDir + '>.')
+      console.log('Try again with right permission.')
+      process.exit(false)
+      return;
+    }
+    fs.unlink(testFile);
+    callback(null);
+  });
+}
+
+function checkRunningStatus(callback) {
+  if (installedAsService) {
+    exec('SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status',
+         function(error, stdin, stdout) {
+           running = !error && stdin.indexOf('running') > -1;
+           callback(running);
+         });
+  }
+  else {
+    exec('droonga-http-server-status ' +
+           '--base-dir="' + baseDir + '" ' +
+           '--pid-file="' + options.pidFile + '"',
+         function(error, stdin, stdout) {
+           running = !error;
+           callback(running);
+         });
+  }
+}
+
+function ensureServiceStopped(callback) {
+  if (!running || options.quiet)
+    return stopService(callback);
+
+  console.log('The droonga-http-server service is now running.');
+  console.log('Before reconfiguration, the service is going to be stopped.');
+  commander.confirm('Are you sure you want to continue reconfiguration?', function(ok) {
+    if (!ok)
+      return process.exit(false);
+
+    stopService(callback);
+  });
+end
+
+function stopService(callback) {
+  if (installedAsService) {
+    exec('service droonga-http-server stop',
+         function(error, stdin, stdout) {
+           callback();
+         });
+  }
+  else {
+    exec('droonga-http-server-stop ' +
+           '--base-dir="' + baseDir + '" ' +
+           '--pid-file="' + options.pidFile + '"',
+         function(error, stdin, stdout) {
+           callback();
+         });
+  }
+}
+
+function startService(callback) {
+  if (installedAsService) {
+    exec('service droonga-http-server start',
+         function(error, stdin, stdout) {
+           callback();
+         });
+  }
+  else {
+    console.log("The droonga-http-server service is still stopped.");
+    console.log("You need to start the service again manually.");
+    callback();
+  }
+}
+
+function parseOptions() {
+  options = require('../lib/server-options');
+  options = options
+              .add('--quiet',
+                   'Run with no prompt.')
+              .add('--reset-config',
+                   'Regenerate the configuration file "droonga-http-server.yaml".')
+              .define()
+              .parse(process.argv);
+}
+
+function configFileExists() {
+  var configFile = path.resolve(baseDir, 'droonga-http-server.yaml');
+  return fs.existsSync(configFile);
+}
+
+function confirmToReconfigure(callback) {
+  if (!options.quiet && !options.resetConfig) {
+    commander.confirm('Do you want the configuration file ' +
+                        '\"droonga-http-server.yaml\" to be regenerated?',
+                      function(ok) {
+                        options.resetConfig = ok;
+                        callback();
+                      });
+  }
+  else {
+    callback();
+  }
+}
+
+function input(message, defaultValue, callback) {
+  commander.prompt(message,
+                  function(value) {
+                    value = value.trim();
+                    if (value === '')
+                      value = defaultValue;
+                    callback(value);
+                  });
+}
+
+
+var configValues = {};
+
+function setValue(name, message, callback) {
+  if (options[name + 'Given'] || options.quiet) {
+    configValues[name] = options[name];
+    callback();
+  }
+  else {
+    input(message, options[name], function(value) {
+      configValues[name] = value;
+      callback();
+    });
+  }
+}
+
+function setBoolean(name, message, callback) {
+  if (options[name + 'Given'] || options.quiet) {
+    configValues[name] = options[name];
+    callback();
+  }
+  else {
+    commander.confirm(message, function(ok) {
+      configValues[name] = ok;
+      callback();
+    });
+  }
+}
+
+
+function tryResetStringConfigs(callback) {
+  if (!options.resetConfig)
+    return callback();
+
+  var configKeys = {
+    port:                  'port',
+    receiverHostName:      'hostname of this node',
+    droongaEngineHostName: 'hostname of the droonga-engine node',
+    droongaEnginePort:     'port number of the droonga-engine node',
+    tag:                   'tag of the droonga-engine node',
+    defaultDataset:        'default dataset',
+    accessLogFile:         'path to the access log file',
+    systemLogFile:         'path to the system log file',
+    cacheSize:             'maximum size of the response cache',
+    environment:           'environment'
+  };
+  if (!installedAsService) {
+    if (options.quiet)
+      configValues.pidFile = defaultConfigs.pid_file;
+    else if (options.pidFileGiven)
+      configValues.pidFile = options.pidFile;
+    else
+      configKeys.pidFile = 'path to the PID file';
+  }
+
+  var keys = Object.keys(configKeys);
+  var key = keys.shift();
+  setValue(key, configKeys[key], function next() {
+    if (!keys.length) {
+      callback();
+    }
+    else {
+      key = keys.shift();
+      setValue(key, configKeys[key], next);
+    }
+  });
+}
+
+function tryResetBooleanConfigs(callback) {
+  if (!options.resetConfig)
+    return callback();
+
+  var configKeys = {
+    enableTrustProxy: 'enable "trust proxy" configuration'
+  };
+  if (installedAsService) {
+    configValues.daemon = true;
+  }
+  else if (options.daemonGiven || options.quiet) {
+    configValues.daemon = options.daemon;
+  }
+  else {
+    configKeys.daemon = 'run as a daemon?';
+  }
+
+  var keys = Object.keys(configKeys);
+  var key = keys.shift();
+  setBoolean(key, configKeys[key], function next() {
+    if (!keys.length) {
+      callback();
+    }
+    else {
+      key = keys.shift();
+      setBoolean(key, configKeys[key], next);
+    }
+  });
+}
+
+function writeNewConfigs(callback) {
+  if (!options.resetConfig)
+    return callback();
+
+  var configs = {};
+  configs.port               = configValues.port;
+  configs.access_log_file    = configValues.accessLogFile;
+  configs.system_log_file    = configValues.systemLogFile;
+  configs.daemon             = configValues.daemon;
+  if ('pidFile' in configValues)
+    configs.pid_file = configValues.pidFile;
+  configs.cache_size         = configValues.cacheSize;
+  configs.enable_trust_proxy = configValues.enableTrustProxy;
+  configs.environment        = configValues.environment;
+
+  var engineConfigs = {};
+  engineConfigs.host            = configValues.droongaEngineHostName;
+  engineConfigs.port            = configValues.droongaEnginePort;
+  engineConfigs.default_dataset = configValues.defaultDataset;
+  engineConfigs.tag             = configValues.tag;
+  engineConfigs.receiver_host   = configValues.receiverHostName;
+  configs.engine = engineConfigs;
+
+  console.log(configs); // TODO: Implement codes to write configs to the file.
+  // TODO: Change permission of the generated config file.
+  callback();
+}
+
+function finish() {
+  if (running)
+    startService();
+}
+
+
+checkInstalledAsService(function() {
+  if (installedAsService)
+    process.env.DROONGA_BASE_DIR = serviceBaseDir;
+
+  baseDir = defaultConfigs.baseDir;
+
+  ensureHaveWritePermission(function() {
+    parseOptions();
+
+    if (!configFileExists()) {
+      options.resetConfig = true;
+    }
+
+    checkRunningStatus(function() {
+      ensureServiceStopped(function() {
+        confirmToReconfigure(function() {
+          tryResetStringConfigs(function() {
+            tryResetBooleanConfigs(function() {
+              writeNewConfigs(finish);
+            });
+          });
+        });
+      });
+    });
+  });
+});
