@@ -73,7 +73,8 @@ function ensureServiceStopped(callback) {
 
   console.log('The droonga-http-server service is now running.');
   console.log('Before reconfiguration, the service is going to be stopped.');
-  promptly.confirm('Are you sure you want to continue reconfiguration?', function(ok) {
+  promptly.confirm('Are you sure you want to continue reconfiguration?',
+                   function(error, ok) {
     if (!ok)
       return process.exit(false);
 
