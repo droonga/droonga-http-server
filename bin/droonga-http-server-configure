@@ -109,8 +109,8 @@ function startService(callback) {
          });
   }
   else {
-    console.log("The droonga-http-server service is still stopped.");
-    console.log("You need to start the service again manually.");
+    console.log('The droonga-http-server service is still stopped.');
+    console.log('You need to start the service again manually.');
     if (callback)
       callback();
   }
@@ -135,7 +135,7 @@ function configFileExists() {
 function confirmToReconfigure(callback) {
   if (!options.quiet && !options.resetConfig) {
     promptly.confirm('Do you want the configuration file ' +
-                        '\"droonga-http-server.yaml\" to be regenerated? (y/N): ',
+                        '"droonga-http-server.yaml" to be regenerated? (y/N): ',
                      { default: 'no',
                        retry:   false },
                      function(error, ok) {
