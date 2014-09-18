@@ -81,6 +81,9 @@ setup_configuration_directory() {
 
   config_file="$DROONGA_BASE_DIR/$NAME.yaml"
   if [ ! -e $config_file ]; then
+    should_reconfigure_engine_host="false"
+    should_reconfigure_host="false"
+
     if [ "$ENGINE_HOST" = "Auto Detect" ]; then
       ENGINE_HOST=""
       engine_config="/home/droonga-engine/droonga/droonga-engine.yaml"
@@ -95,15 +98,7 @@ setup_configuration_directory() {
       else
         if [ "$ENGINE_HOST" = "" ]; then
           ENGINE_HOST=$(hostname)
-          echo "********************** CAUTION!! **********************"
-          echo "Installation process coudln't detect the hostname of"
-          echo "the droonga-engine node to be connected."
-          echo "You may have to configure following file manually"
-          echo "to refer a valid accessible hostname of an existing"
-          echo "droonga-engine node:"
-          echo ""
-          echo "  $DROONGA_BASE_DIR/$NAME.yaml"
-          echo "*******************************************************"
+          should_reconfigure_engine_host="true"
         fi
         echo "This node is configured to connect to the droonga-engine node $ENGINE_HOST."
       fi
@@ -115,23 +110,33 @@ setup_configuration_directory() {
 
     if [ "$HOST" = "" ]; then
       HOST=$(hostname)
-      echo "********************** CAUTION!! **********************"
-      echo "Installation process coudln't detect the hostname of"
-      echo "this node, which is accessible from other nodes."
-      echo "You may have to configure following file manually"
-      echo "to refer a valid accessible hostname for this node:"
-      echo ""
-      echo "  $DROONGA_BASE_DIR/$NAME.yaml"
-      echo "*******************************************************"
+      should_reconfigure_host="true"
     fi
     echo "This node is configured with a hostname $HOST."
 
-    curl -o $config_file.template $SCRIPT_URL/$PLATFORM/$NAME.yaml
-    cat $config_file.template | \
-      $sed -e "s/\\\$engine_hostname/$ENGINE_HOST/" \
-           -e "s/\\\$receiver_hostname/$HOST/" \
-      > $config_file
-    rm $config_file.template
+    if [ "$should_reconfigure_engine_host" = "true" -o \
+         "$should_reconfigure_host" = "true" ]; then
+      echo "********************** CAUTION!! **********************"
+      echo "Installation process coudln't detect following parameters:"
+      echo ""
+      if [ "$should_reconfigure_engine_host" = "true" ]; then
+        echo " * the hostname of the droonga-engine node to be connected"
+      end
+      if [ "$should_reconfigure_host" = "true" ]; then
+        echo " * the hostname of this node, which is accessible from "
+        echo "   other nodes"
+      fi
+      echo ""
+      echo "You may have to configure droonga-http-server manually,"
+      echo "by following command line:"
+      echo ""
+      echo "  droonga-http-server-configure --reset-config"
+      echo "*******************************************************"
+    fi
+
+    droonga-http-server-configure --quiet \
+                                  --droonga-engine-host-name=$ENGINE_HOST \
+                                  --receive-host-name=$HOST
   fi
 
   chown -R $USER.$USER $DROONGA_BASE_DIR
