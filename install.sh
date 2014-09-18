@@ -188,9 +188,8 @@ install_master() {
   if [ -d $NAME ]
   then
     cd $NAME
-    git stash save
+    git reset --hard
     git pull --rebase
-    git stash pop
     use_master_express_droonga
     npm update
   else
