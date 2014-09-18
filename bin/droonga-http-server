@@ -15,6 +15,7 @@ var cookieParser = require('cookie-parser'),
 
 var defaultConfigs = require('../lib/default-configs');
 var options = require('../lib/server-options');
+options = options.define().parse(process.argv);
 
 var baseDir = defaultConfigs.baseDir;
 
