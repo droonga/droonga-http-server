@@ -34,7 +34,7 @@ function checkInstalledAsService(callback) {
 }
 
 function ensureHaveWritePermission(callback) {
-  testFile = baseDir + '/' + Time.now() + '.test';
+  testFile = baseDir + '/' + Date.now() + '.test';
   touch(testFile, {}, function(error) {
     if (error || !fs.existsSync(testFile)) {
       console.log('You have no permission to write files under ' +
