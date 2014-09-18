@@ -73,9 +73,11 @@ function ensureServiceStopped(callback) {
 
   console.log('The droonga-http-server service is now running.');
   console.log('Before reconfiguration, the service is going to be stopped.');
-  promptly.confirm('Are you sure you want to continue reconfiguration? (y/N)',
+  promptly.confirm('Are you sure you want to continue reconfiguration? (y/N): ',
+                   { default: 'no',
+                     retry:   false },
                    function(error, ok) {
-                     if (!ok)
+                     if (error || !ok)
                        return process.exit(false);
                      stopService(callback);
                    });
@@ -131,27 +133,18 @@ function configFileExists() {
 function confirmToReconfigure(callback) {
   if (!options.quiet && !options.resetConfig) {
     promptly.confirm('Do you want the configuration file ' +
-                        '\"droonga-http-server.yaml\" to be regenerated?',
-                      function(ok) {
-                        options.resetConfig = ok;
-                        callback();
-                      });
+                        '\"droonga-http-server.yaml\" to be regenerated? (y/N): ',
+                     { default: 'no',
+                       retry:   false },
+                     function(error, ok) {
+                       options.resetConfig = !error && ok;
+                       callback();
+                     });
   }
   else {
     callback();
   }
 }
-
-function input(message, defaultValue, callback) {
-  promptly.prompt(message,
-                  function(value) {
-                    value = value.trim();
-                    if (value === '')
-                      value = defaultValue;
-                    callback(value);
-                  });
-}
-
 
 var configValues = {};
 
@@ -161,10 +154,13 @@ function setValue(name, message, callback) {
     callback();
   }
   else {
-    input(message, options[name], function(value) {
-      configValues[name] = value;
-      callback();
-    });
+    promptly.prompt(message + ' [' + options[name] + ']: ',
+                    { default: options[name],
+                      retry:   false },
+                    function(error, value) {
+                      configValues[name] = value;
+                      callback();
+                    });
   }
 }
 
@@ -174,10 +170,13 @@ function setBoolean(name, message, callback) {
     callback();
   }
   else {
-    promptly.confirm(message, function(ok) {
-      configValues[name] = ok;
-      callback();
-    });
+    promptly.confirm(message + ' (y/N): ',
+                     { default: 'no',
+                       retry:   false },
+                     function(error, ok) {
+                       configValues[name] = !error && ok;
+                       callback();
+                     });
   }
 }
 
