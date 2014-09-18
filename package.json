@@ -34,6 +34,8 @@
   },
   "bin": {
     "droonga-http-server": "./bin/droonga-http-server",
+    "droonga-http-server-configure": "./bin/droonga-http-server-configure",
+    "droonga-http-server-status": "./bin/droonga-http-server-status",
     "droonga-http-server-stop": "./bin/droonga-http-server-stop"
   },
   "main": "index",
