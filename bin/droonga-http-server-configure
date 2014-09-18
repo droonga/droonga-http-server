@@ -79,7 +79,7 @@ function ensureServiceStopped(callback) {
 
     stopService(callback);
   });
-end
+}
 
 function stopService(callback) {
   if (installedAsService) {
