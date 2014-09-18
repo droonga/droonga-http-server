@@ -1,5 +1,5 @@
 port:               10041
-access_log_file:    droogna-http-server.access.log
+access_log_file:    droonga-http-server.access.log
 system_log_file:    droonga-http-server.system.log
 cache_size:         100
 enable_trust_proxy: false
