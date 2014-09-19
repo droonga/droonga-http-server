@@ -186,10 +186,11 @@ function confirmToReconfigure() {
 
 var configValues = {};
 
-function setValue(name, message, callback) {
+function setString(name, message) {
+ return Q.Promise(function(resolve, reject, notify) {
   if (options[name + 'Given'] || options.quiet) {
     configValues[name] = options[name];
-    callback();
+    resolve();
   }
   else {
     promptly.prompt(message + ' [' + options[name] + ']: ',
@@ -197,15 +198,17 @@ function setValue(name, message, callback) {
                       retry:   false },
                     function(error, value) {
                       configValues[name] = value;
-                      callback();
+                      resolve();
                     });
   }
+ });
 }
 
-function setBoolean(name, message, callback) {
+function setBoolean(name, message) {
+ return Q.Promise(function(resolve, reject, notify) {
   if (options[name + 'Given'] || options.quiet) {
     configValues[name] = options[name];
-    callback();
+    resolve();
   }
   else {
     promptly.confirm(message + ' (y/N): ',
@@ -213,86 +216,57 @@ function setBoolean(name, message, callback) {
                        retry:   false },
                      function(error, ok) {
                        configValues[name] = !error && ok;
-                       callback();
+                       resolve();
                      });
   }
+ });
 }
 
 
-function tryResetStringConfigs() {
+function tryResetConfigs() {
  return Q.Promise(function(resolve, reject, notify) {
   if (!options.resetConfig)
     return resolve();
 
-  var configKeys = {
-    port:                  'port',
-    receiverHostName:      'hostname of this node',
-    droongaEngineHostName: 'hostname of the droonga-engine node',
-    droongaEnginePort:     'port number of the droonga-engine node',
-    tag:                   'tag of the droonga-engine node',
-    defaultDataset:        'default dataset',
-    accessLogFile:         'path to the access log file',
-    systemLogFile:         'path to the system log file',
-    cacheSize:             'maximum size of the response cache',
-    environment:           'environment'
-  };
   if (serviceUserExists) {
     options.accessLogFile = 'droonga-http-server.access.log';
     options.systemLogFile = 'droonga-http-server.system.log';
     options.environment = 'production';
   }
-  if (!installedAsService) {
-    if (options.quiet || serviceUserExists)
-      configValues.pidFile = defaultConfigs.pid_file;
-    else if (options.pidFileGiven)
-      configValues.pidFile = options.pidFile;
-    else
-      configKeys.pidFile = 'path to the PID file';
-  }
 
-  var keys = Object.keys(configKeys);
-  var key = keys.shift();
-  setValue(key, configKeys[key], function next() {
-    if (!keys.length) {
-      resolve();
-    }
-    else {
-      key = keys.shift();
-      setValue(key, configKeys[key], next);
-    }
-  });
- });
-}
-
-function tryResetBooleanConfigs() {
- return Q.Promise(function(resolve, reject, notify) {
-  if (!options.resetConfig)
-    return resolve();
-
-  var configKeys = {
-    enableTrustProxy: 'enable "trust proxy" configuration'
-  };
-  if (serviceUserExists) {
-    configValues.daemon = true;
-  }
-  else if (options.daemonGiven || options.quiet) {
-    configValues.daemon = options.daemon;
-  }
-  else {
-    configKeys.daemon = 'run as a daemon?';
-  }
-
-  var keys = Object.keys(configKeys);
-  var key = keys.shift();
-  setBoolean(key, configKeys[key], function next() {
-    if (!keys.length) {
-      resolve();
-    }
-    else {
-      key = keys.shift();
-      setBoolean(key, configKeys[key], next);
-    }
-  });
+  setString('port', 'port')
+   .then(function() { return setString('receiverHostName', 'hostname of this node'); })
+   .then(function() { return setString('droongaEngineHostName', 'hostname of the droonga-engine node'); })
+   .then(function() { return setString('droongaEnginePort', 'port number of the droonga-engine node'); })
+   .then(function() { return setString('tag', 'tag of the droonga-engine node'); })
+   .then(function() { return setString('defaultDataset', 'default dataset'); })
+   .then(function() {
+     if (serviceUserExists) {
+       configValues.daemon = true;
+     }
+     else if (options.daemonGiven || options.quiet) {
+       configValues.daemon = options.daemon;
+     }
+     else {
+       return setBoolean('daemon', 'run as a daemon?');
+     }
+   })
+   .then(function() { return setString('accessLogFile', 'path to the access log file'); })
+   .then(function() { return setString('systemLogFile', 'path to the system log file'); })
+   .then(function() {
+     if (!installedAsService) {
+       if (options.quiet || serviceUserExists)
+         configValues.pidFile = defaultConfigs.pid_file;
+       else if (options.pidFileGiven)
+         configValues.pidFile = options.pidFile;
+       else
+         return setString('pidFile', 'path to the PID file');
+     }
+   })
+   .then(function() { return setString('cacheSize', 'maximum size of the response cache'); })
+   .then(function() { return setBoolean('enableTrustProxy', 'enable "trust proxy" configuration'); })
+   .then(function() { return setString('environment', 'environment'); })
+   .then(resolve);
  });
 }
 
@@ -370,8 +344,7 @@ checkServiceUserExistence()
  .then(checkRunningStatus)
  .then(ensureServiceStopped)
  .then(confirmToReconfigure)
- .then(tryResetStringConfigs)
- .then(tryResetBooleanConfigs)
+ .then(tryResetConfigs)
  .then(writeNewConfigs)
  .then(finish);
 
