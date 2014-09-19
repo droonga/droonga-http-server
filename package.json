@@ -29,6 +29,7 @@
     "morgan": "*",
     "promptly": "*",
     "ps-node": "*",
+    "q": "*",
     "response-time": "*",
     "touch": "*",
     "uid-number": "*",

@@ -5,6 +5,7 @@ var exec     = require('child_process').exec,
     fs       = require('fs'),
     path     = require('path'),
     promptly = require('promptly'),
+    Q        = require('q'),
     touch    = require('touch'),
     uid      = require('uid-number'),
     yaml     = require('js-yaml');
@@ -22,34 +23,39 @@ var installedAsService = false;
 var running            = false;
 
 
-function checkServiceUserExistence(callback) {
+function checkServiceUserExistence() {
+ return Q.Promise(function(resolve, reject, notify) {
   exec('id ' + serviceUserName, function(error, stdin, stdout) {
     if (!error)
       serviceUserExists = true;
-    callback(serviceUserExists);
+    resolve(serviceUserExists);
   });
+ });
 }
 
-function checkInstalledAsService(callback) {
+function checkInstalledAsService() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (!serviceUserName)
-    return callback(installedAsService);
+    return resolve(installedAsService);
 
   exec('service droonga-http-server status', function(error, stdin, stdout) {
     if (error) {
       exec('SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status', function(error, stdin, stdout) {
         installedAsService = stdin.indexOf('running') > -1 ||
                              stdin.indexOf('droonga-http-server is stopped') > -1;
-        callback(installedAsService);
+        resolve(installedAsService);
       });
     }
     else {
       installedAsService = true;
-      callback(installedAsService);
+      resolve(installedAsService);
     }
   });
+ });
 }
 
-function ensureHaveWritePermission(callback) {
+function ensureHaveWritePermission() {
+ return Q.Promise(function(resolve, reject, notify) {
   testFile = baseDir + '/' + Date.now() + '.test';
   touch(testFile, {}, function(error) {
     if (error || !fs.existsSync(testFile)) {
@@ -57,19 +63,21 @@ function ensureHaveWritePermission(callback) {
                     '<' + baseDir + '>.')
       console.log('Try again with right permission.')
       process.exit(false)
-      return;
+      return reject(error);
     }
     fs.unlinkSync(testFile);
-    callback(null);
+    resolve();
   });
+ });
 }
 
-function checkRunningStatus(callback) {
+function checkRunningStatus() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (installedAsService) {
     exec('SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status',
          function(error, stdin, stdout) {
            running = !error && stdin.indexOf('running') > -1;
-           callback(running);
+           resolve(running);
          });
   }
   else {
@@ -78,14 +86,16 @@ function checkRunningStatus(callback) {
            '--pid-file="' + options.pidFile + '"',
          function(error, stdin, stdout) {
            running = !error;
-           callback(running);
+           resolve(running);
          });
   }
+ });
 }
 
-function ensureServiceStopped(callback) {
+function ensureServiceStopped() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (!running || options.quiet)
-    return stopService(callback);
+    return stopService().then(resolve);
 
   console.log('The droonga-http-server service is now running.');
   console.log('Before reconfiguration, the service is going to be stopped.');
@@ -93,17 +103,21 @@ function ensureServiceStopped(callback) {
                    { default: 'no',
                      retry:   false },
                    function(error, ok) {
-                     if (error || !ok)
-                       return process.exit(false);
-                     stopService(callback);
+                     if (error || !ok) {
+                       process.exit(false);
+                       return reject(error);
+                     }
+                     stopService().then(resolve);
                    });
+ });
 }
 
-function stopService(callback) {
+function stopService() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (installedAsService) {
     exec('service droonga-http-server stop',
          function(error, stdin, stdout) {
-           callback();
+           resolve();
          });
   }
   else {
@@ -111,25 +125,26 @@ function stopService(callback) {
            '--base-dir="' + baseDir + '" ' +
            '--pid-file="' + options.pidFile + '"',
          function(error, stdin, stdout) {
-           callback();
+           resolve();
          });
   }
+ });
 }
 
-function startService(callback) {
+function startService() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (installedAsService) {
     exec('service droonga-http-server start',
          function(error, stdin, stdout) {
-           if (callback)
-             callback();
+           resolve();
          });
   }
   else {
     console.log('The droonga-http-server service is still stopped.');
     console.log('You need to start the service again manually.');
-    if (callback)
-      callback();
+    resolve();
   }
+ });
 }
 
 function parseOptions() {
@@ -151,7 +166,8 @@ function configFileExists() {
   return fs.existsSync(configFilePath());
 }
 
-function confirmToReconfigure(callback) {
+function confirmToReconfigure() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (!options.quiet && !options.resetConfig) {
     promptly.confirm('Do you want the configuration file ' +
                         '"droonga-http-server.yaml" to be regenerated? (y/N): ',
@@ -159,12 +175,13 @@ function confirmToReconfigure(callback) {
                        retry:   false },
                      function(error, ok) {
                        options.resetConfig = !error && ok;
-                       callback();
+                       resolve();
                      });
   }
   else {
-    callback();
+    resolve();
   }
+ });
 }
 
 var configValues = {};
@@ -202,9 +219,10 @@ function setBoolean(name, message, callback) {
 }
 
 
-function tryResetStringConfigs(callback) {
+function tryResetStringConfigs() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (!options.resetConfig)
-    return callback();
+    return resolve();
 
   var configKeys = {
     port:                  'port',
@@ -236,18 +254,20 @@ function tryResetStringConfigs(callback) {
   var key = keys.shift();
   setValue(key, configKeys[key], function next() {
     if (!keys.length) {
-      callback();
+      resolve();
     }
     else {
       key = keys.shift();
       setValue(key, configKeys[key], next);
     }
   });
+ });
 }
 
-function tryResetBooleanConfigs(callback) {
+function tryResetBooleanConfigs() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (!options.resetConfig)
-    return callback();
+    return resolve();
 
   var configKeys = {
     enableTrustProxy: 'enable "trust proxy" configuration'
@@ -266,18 +286,20 @@ function tryResetBooleanConfigs(callback) {
   var key = keys.shift();
   setBoolean(key, configKeys[key], function next() {
     if (!keys.length) {
-      callback();
+      resolve();
     }
     else {
       key = keys.shift();
       setBoolean(key, configKeys[key], next);
     }
   });
+ });
 }
 
-function writeNewConfigs(callback) {
+function writeNewConfigs() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (!options.resetConfig)
-    return callback();
+    return resolve();
 
   var configs = {};
   configs.port               = configValues.port;
@@ -304,12 +326,13 @@ function writeNewConfigs(callback) {
   if (serviceUserExists) {
     uid(serviceUserName, serviceGroupName, function(error, uid, gid) {
       fs.chownSync(configFilePath(), uid, gid);
-      callback();
+      resolve();
     });
   }
   else {
-    callback();
+    resolve();
   }
+ });
 }
 
 function safeWriteFileSync(path, data, options) {
@@ -319,36 +342,36 @@ function safeWriteFileSync(path, data, options) {
 }
 
 function finish() {
+ return Q.Promise(function(resolve, reject, notify) {
   if (running)
-    startService();
+    startService().resolve();
+  else
+    resolve();
+ });
 }
 
 
-checkServiceUserExistence(function() {
-checkInstalledAsService(function() {
+checkServiceUserExistence()
+ .then(checkInstalledAsService)
+ .then(function() {
   if (serviceUserExists)
     process.env.DROONGA_BASE_DIR = defaultConfigs.baseDir = serviceBaseDir;
 
   baseDir = defaultConfigs.baseDir;
+ })
+ .then(ensureHaveWritePermission)
+ .then(function() {
+  parseOptions();
 
-  ensureHaveWritePermission(function() {
-    parseOptions();
+  if (!configFileExists()) {
+    options.resetConfig = true;
+  }
+ })
+ .then(checkRunningStatus)
+ .then(ensureServiceStopped)
+ .then(confirmToReconfigure)
+ .then(tryResetStringConfigs)
+ .then(tryResetBooleanConfigs)
+ .then(writeNewConfigs)
+ .then(finish);
 
-    if (!configFileExists()) {
-      options.resetConfig = true;
-    }
-
-    checkRunningStatus(function() {
-      ensureServiceStopped(function() {
-        confirmToReconfigure(function() {
-          tryResetStringConfigs(function() {
-            tryResetBooleanConfigs(function() {
-              writeNewConfigs(finish);
-            });
-          });
-        });
-      });
-    });
-  });
-});
-});
