@@ -204,6 +204,27 @@ function setString(name, message) {
  });
 }
 
+function setInteger(name, message) {
+ return Q.Promise(function(resolve, reject, notify) {
+  if (options[name + 'Given'] || options.quiet) {
+    configValues[name] = options[name];
+    resolve();
+  }
+  else {
+    promptly.prompt(message + ' [' + options[name] + ']: ',
+                    { default: options[name],
+                      retry:   false },
+                    function(error, value) {
+                      value = parseInt(value);
+                      if (isNaN(value))
+                        value = options[name];
+                      configValues[name] = value;
+                      resolve();
+                    });
+  }
+ });
+}
+
 function setBoolean(name, message) {
  return Q.Promise(function(resolve, reject, notify) {
   if (options[name + 'Given'] || options.quiet) {
@@ -234,10 +255,10 @@ function tryResetConfigs() {
     options.environment = 'production';
   }
 
-  setString('port', 'port')
+  setInteger('port', 'port')
    .then(function() { return setString('receiverHostName', 'hostname of this node'); })
    .then(function() { return setString('droongaEngineHostName', 'hostname of the droonga-engine node'); })
-   .then(function() { return setString('droongaEnginePort', 'port number of the droonga-engine node'); })
+   .then(function() { return setInteger('droongaEnginePort', 'port number of the droonga-engine node'); })
    .then(function() { return setString('tag', 'tag of the droonga-engine node'); })
    .then(function() { return setString('defaultDataset', 'default dataset'); })
    .then(function() {
@@ -263,7 +284,7 @@ function tryResetConfigs() {
          return setString('pidFile', 'path to the PID file');
      }
    })
-   .then(function() { return setString('cacheSize', 'maximum size of the response cache'); })
+   .then(function() { return setInteger('cacheSize', 'maximum size of the response cache'); })
    .then(function() { return setBoolean('enableTrustProxy', 'enable "trust proxy" configuration'); })
    .then(function() { return setString('environment', 'environment'); })
    .then(resolve);
