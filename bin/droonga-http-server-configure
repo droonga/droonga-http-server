@@ -40,7 +40,7 @@ function checkInstalledAsService() {
 
   exec('service droonga-http-server status', function(error, stdin, stdout) {
     if (error) {
-      exec('SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status', function(error, stdin, stdout) {
+      exec('env SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status', function(error, stdin, stdout) {
         installedAsService = stdin.indexOf('running') > -1 ||
                              stdin.indexOf('droonga-http-server is stopped') > -1;
         resolve(installedAsService);
@@ -74,7 +74,7 @@ function ensureHaveWritePermission() {
 function checkRunningStatus() {
  return Q.Promise(function(resolve, reject, notify) {
   if (installedAsService) {
-    exec('SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status',
+    exec('env SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status',
          function(error, stdin, stdout) {
            running = !error && stdin.indexOf('running') > -1;
            resolve(running);
