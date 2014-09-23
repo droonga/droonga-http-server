@@ -9,4 +9,4 @@ engine:
   port:            10031
   default_dataset: Default
   tag:             droonga
-  receiver_host:   192.168.0.10
+  receive_host:    192.168.0.10

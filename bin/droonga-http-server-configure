@@ -312,7 +312,7 @@ function writeNewConfigs() {
   engineConfigs.port            = configValues.droongaEnginePort;
   engineConfigs.default_dataset = configValues.defaultDataset;
   engineConfigs.tag             = configValues.tag;
-  engineConfigs.receiver_host   = configValues.receiveHostName;
+  engineConfigs.receive_host    = configValues.receiveHostName;
   configs.engine = engineConfigs;
 
   var configYaml = yaml.safeDump(configs);
