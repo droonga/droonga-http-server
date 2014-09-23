@@ -256,7 +256,7 @@ function tryResetConfigs() {
   }
 
   setInteger('port', 'port')
-   .then(function() { return setString('receiverHostName', 'hostname of this node'); })
+   .then(function() { return setString('receiveHostName', 'hostname of this node'); })
    .then(function() { return setString('droongaEngineHostName', 'hostname of the droonga-engine node'); })
    .then(function() { return setInteger('droongaEnginePort', 'port number of the droonga-engine node'); })
    .then(function() { return setString('tag', 'tag of the droonga-engine node'); })
@@ -312,7 +312,7 @@ function writeNewConfigs() {
   engineConfigs.port            = configValues.droongaEnginePort;
   engineConfigs.default_dataset = configValues.defaultDataset;
   engineConfigs.tag             = configValues.tag;
-  engineConfigs.receiver_host   = configValues.receiverHostName;
+  engineConfigs.receiver_host   = configValues.receiveHostName;
   configs.engine = engineConfigs;
 
   var configYaml = yaml.safeDump(configs);
