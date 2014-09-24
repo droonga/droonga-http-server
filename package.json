@@ -23,7 +23,7 @@
     "commander": "*",
     "daemon": "*",
     "express": ">=4.0",
-    "express-droonga": "*",
+    "express-droonga": ">=1.0.5",
     "express-session": "*",
     "js-yaml": "*",
     "morgan": "*",
