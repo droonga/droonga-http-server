@@ -45,6 +45,10 @@ EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#mast
 : ${HOST:=Auto Detect}
 : ${ENGINE_HOST:=Auto Detect}
 
+REQUIRED_COMMANDS=npm
+[ "$VERSION" = "master" ] &&
+  REQUIRED_COMMANDS="$REQUIRED_COMMANDS git"
+
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
   *)                   sed="sed -r" ;;
@@ -54,12 +58,31 @@ exist_command() {
   type "$1" > /dev/null 2>&1
 }
 
+exist_all_commands() {
+  for command in $@; do
+    if ! exist_command $command; then
+      return 1
+    fi
+  done
+  return 0
+}
+
 exist_yum_repository() {
   yum repolist | grep --quiet "$1"
 }
 
 exist_user() {
   id "$1" > /dev/null 2>&1
+}
+
+prepare_environment() {
+  if exist_all_commands $REQUIRED_COMMANDS; then
+    return 0
+  fi
+
+  echo "Preparing the environment..."
+  prepare_environment_in_$PLATFORM
+  return 0
 }
 
 prepare_user() {
@@ -266,8 +289,7 @@ register_service_in_centos() {
 
 
 install() {
-  echo "Preparing environment..."
-  prepare_environment_in_$PLATFORM
+  prepare_environment
 
   echo ""
   if [ "$VERSION" = "master" ]; then
