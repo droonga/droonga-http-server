@@ -104,13 +104,6 @@ if (options.cacheSize > 0) {
       rules: cacheMiddlewareRules,
       logger: logger
     }));
-  } else if (droonga.cache) {
-    // TODO: Remove me when express-droonga 1.0.2 is released and
-    // droonga-http-server requires express-droonga 1.0.2 or later.
-    application.use(droonga.cache({
-      size: options.cacheSize,
-      rules: cacheMiddlewareRules,
-    }));
   }
 }
 
