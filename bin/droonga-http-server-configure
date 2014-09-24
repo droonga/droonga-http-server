@@ -22,6 +22,16 @@ var serviceUserExists  = false;
 var installedAsService = false;
 var running            = false;
 
+function NotInstalledAsServiceError() {
+  return new Error(this.prototype.message);
+}
+NotInstalledAsServiceError.prototype = {
+  message: 'not installed as a service'
+};
+NotInstalledAsServiceError.isInstance = function(error) {
+  return error.message.indexOf(this.prototype.message) > -1;
+};
+
 
 function checkServiceUserExistence() {
   return Q.Promise(function(resolve, reject, notify) {
@@ -82,20 +92,17 @@ function checkRunningStatus() {
            });
     }
     else {
-      exec('droonga-http-server-status ' +
-             '--base-dir="' + baseDir + '" ' +
-             '--pid-file="' + options.pidFile + '"',
-           function(error, stdin, stdout) {
-             running = !error;
-             resolve(running);
-           });
+      reject(new NotInstalledAsServiceError());
     }
   });
 }
 
 function ensureServiceStopped() {
   return Q.Promise(function(resolve, reject, notify) {
-    if (!running || options.quiet)
+    if (!running)
+      return resolve();
+
+    if (options.quiet)
       return stopService().then(resolve);
 
     console.log('The droonga-http-server service is now running.');
@@ -122,12 +129,7 @@ function stopService() {
            });
     }
     else {
-      exec('droonga-http-server-stop ' +
-             '--base-dir="' + baseDir + '" ' +
-             '--pid-file="' + options.pidFile + '"',
-           function(error, stdin, stdout) {
-             resolve();
-           });
+      reject(new NotInstalledAsServiceError());
     }
   });
 }
@@ -141,9 +143,7 @@ function startService() {
            });
     }
     else {
-      console.log('The droonga-http-server service is still stopped.');
-      console.log('You need to start the service again manually.');
-      resolve();
+      reject(new NotInstalledAsServiceError());
     }
   });
 }
@@ -250,11 +250,9 @@ function tryResetConfigs() {
     if (!options.resetConfig)
       return resolve();
 
-    if (serviceUserExists) {
-      options.accessLogFile = 'droonga-http-server.access.log';
-      options.systemLogFile = 'droonga-http-server.system.log';
-      options.environment = 'production';
-    }
+    options.accessLogFile = 'droonga-http-server.access.log';
+    options.systemLogFile = 'droonga-http-server.system.log';
+    options.environment = 'production';
 
     setIntegerOption('port', 'port')
       .then(function() { return setStringOption('receiveHostName', 'hostname of this node'); })
@@ -262,29 +260,8 @@ function tryResetConfigs() {
       .then(function() { return setIntegerOption('droongaEnginePort', 'port number of the droonga-engine node'); })
       .then(function() { return setStringOption('tag', 'tag of the droonga-engine node'); })
       .then(function() { return setStringOption('defaultDataset', 'default dataset'); })
-      .then(function() {
-        if (serviceUserExists) {
-          configValues.daemon = true;
-        }
-        else if (options.daemonGiven || options.quiet) {
-          configValues.daemon = options.daemon;
-        }
-        else {
-          return setBooleanOption('daemon', 'run as a daemon?');
-        }
-      })
       .then(function() { return setStringOption('accessLogFile', 'path to the access log file'); })
       .then(function() { return setStringOption('systemLogFile', 'path to the system log file'); })
-      .then(function() {
-        if (!installedAsService) {
-          if (options.quiet || serviceUserExists)
-            configValues.pidFile = defaultConfigs.pid_file;
-          else if (options.pidFileGiven)
-            configValues.pidFile = options.pidFile;
-          else
-            return setStringOption('pidFile', 'path to the PID file');
-        }
-      })
       .then(function() { return setIntegerOption('cacheSize', 'maximum size of the response cache'); })
       .then(function() { return setBooleanOption('enableTrustProxy', 'enable "trust proxy" configuration'); })
       .then(function() { return setStringOption('environment', 'environment'); })
@@ -301,9 +278,7 @@ function writeNewConfigs() {
     configs.port               = configValues.port;
     configs.access_log_file    = configValues.accessLogFile;
     configs.system_log_file    = configValues.systemLogFile;
-    configs.daemon             = configValues.daemon;
-    if ('pidFile' in configValues)
-      configs.pid_file = configValues.pidFile;
+    configs.daemon             = true;
     configs.cache_size         = configValues.cacheSize;
     configs.enable_trust_proxy = configValues.enableTrustProxy;
     configs.environment        = configValues.environment;
@@ -364,8 +339,16 @@ checkServiceUserExistence()
     }
   })
   .then(checkRunningStatus)
+  .catch(function(error) {
+    if (!NotInstalledAsServiceError.isInstance(error))
+      throw error;
+  })
   .then(ensureServiceStopped)
   .then(confirmToReconfigure)
   .then(tryResetConfigs)
   .then(writeNewConfigs)
-  .then(finish);
+  .then(finish)
+  .catch(function(error) {
+    console.error(error);
+    process.exit(false);
+  });
