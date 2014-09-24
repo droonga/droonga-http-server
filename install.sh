@@ -71,8 +71,6 @@ prepare_user() {
 }
 
 setup_configuration_directory() {
-  PLATFORM=$1
-
   echo ""
   echo "Setting up the configuration directory..."
 
@@ -208,40 +206,37 @@ install_master() {
 
 install_service_script() {
   INSTALL_LOCATION=$1
-  PLATFORM=$2
   DOWNLOAD_URL=$SCRIPT_URL/$PLATFORM/$NAME
   curl -o $INSTALL_LOCATION $DOWNLOAD_URL
   chmod +x $INSTALL_LOCATION
 }
 
-install_in_debian() {
-  # install droonga
+
+
+# ====================== for Debian/Ubuntu ==========================
+
+prepare_environment_in_debian() {
   apt-get update
   apt-get -y upgrade
   apt-get install -y nodejs nodejs-legacy npm
 
-  echo ""
-
   if [ "$VERSION" = "master" ]; then
-    echo "Installing $NAME from the git repository..."
     apt-get install -y git
-    install_master
-  else
-    echo "Installing $NAME from npmjs.org..."
-    npm install -g droonga-http-server
   fi
+}
 
-  prepare_user
-  
-  setup_configuration_directory debian
-
-  echo ""
-  echo "Registering $NAME as a service..."
+register_service_in_debian() {
   install_service_script /etc/init.d/$NAME debian
   update-rc.d $NAME defaults
 }
 
-install_in_centos() {
+# ====================== /for Debian/Ubuntu =========================
+
+
+
+# ========================= for CentOS 7 ============================
+
+prepare_environment_in_centos() {
   if ! exist_yum_repository epel; then
     # epel-release is not installed, so install it.
     yum -y install epel-release
@@ -256,11 +251,26 @@ install_in_centos() {
   fi
   yum -y --enablerepo=epel install npm
 
-  echo ""
+  if [ "$VERSION" = "master" ]; then
+    yum -y install git
+  fi
+}
 
+register_service_in_centos() {
+  install_service_script /etc/rc.d/init.d/$NAME centos
+  /sbin/chkconfig --add $NAME
+}
+
+# ========================= /for CentOS 7 ===========================
+
+
+
+install() {
+  prepare_environment_in_$PLATFORM
+
+  echo ""
   if [ "$VERSION" = "master" ]; then
     echo "Installing $NAME from the git repository..."
-    yum -y install git
     install_master
   else
     echo "Installing $NAME from npmjs.org..."
@@ -269,26 +279,28 @@ install_in_centos() {
 
   prepare_user
 
-  setup_configuration_directory centos
+  setup_configuration_directory $PLATFORM
 
   echo ""
   echo "Registering $NAME as a service..."
-  install_service_script /etc/rc.d/init.d/$NAME centos
-  /sbin/chkconfig --add $NAME
+  register_service_in_$PLATFORM
+
+  echo ""
+  echo "Successfully installed $NAME."
 }
 
 if [ "$EUID" != "0" ]; then
   echo "You must run this script as the root."
   exit 1
 elif [ -e /etc/debian_version ] || [ -e /etc/debian_release ]; then
-  install_in_debian
+  PLATFORM=debian
 elif [ -e /etc/centos-release ]; then
-  install_in_centos
+  PLATFORM=centos
 else
   echo "Not supported platform. This script works only for Debian or CentOS."
   exit 255
 fi
 
-echo ""
-echo "Successfully installed $NAME."
+install $PLATFORM
+
 exit 0
