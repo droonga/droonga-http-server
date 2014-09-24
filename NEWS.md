@@ -7,9 +7,9 @@
    Currently it works only for Debian, Ubuntu, and CentOS 7.
  * A static configuration file to define default parameters (`port` and so on) is now available.
    It must be placed into the configuration directory specified by the environment variable `DROONGA_BASE_DIR`.
-   You don't have to run "droonga-http-server" command with many options, anymore.
- * `droonga-http-server-configure`, a new command line utility is available.
-   It generates a static configuration file for the service.
+   You don't have to run `droonga-http-server` command with many options, anymore.
+ * A new command line utility `droonga-http-server-configure` is available.
+   It generates the static configuration file for the service.
  * Cached responses are now returned correctly.
 
 ## 1.0.6: 2014-07-29
