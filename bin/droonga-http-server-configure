@@ -147,7 +147,7 @@ function startService() {
   });
 }
 
-function parseOptions() {
+function parseOptionsSync() {
   options = require('../lib/server-options');
   options = options
               .add('--quiet',
@@ -158,12 +158,12 @@ function parseOptions() {
               .parse(process.argv);
 }
 
-function configFilePath() {
+function configFilePathSync() {
   return path.resolve(baseDir, 'droonga-http-server.yaml');
 }
 
-function configFileExists() {
-  return fs.existsSync(configFilePath());
+function configFileExistsSync() {
+  return fs.existsSync(configFilePathSync());
 }
 
 function confirmToReconfigure() {
@@ -186,7 +186,7 @@ function confirmToReconfigure() {
 
 var configValues = {};
 
-function setString(name, message) {
+function setStringOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
     if (options[name + 'Given'] || options.quiet) {
       configValues[name] = options[name];
@@ -204,7 +204,7 @@ function setString(name, message) {
   });
 }
 
-function setInteger(name, message) {
+function setIntegerOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
     if (options[name + 'Given'] || options.quiet) {
       configValues[name] = options[name];
@@ -225,7 +225,7 @@ function setInteger(name, message) {
   });
 }
 
-function setBoolean(name, message) {
+function setBooleanOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
     if (options[name + 'Given'] || options.quiet) {
       configValues[name] = options[name];
@@ -255,12 +255,12 @@ function tryResetConfigs() {
       options.environment = 'production';
     }
 
-    setInteger('port', 'port')
-      .then(function() { return setString('receiveHostName', 'hostname of this node'); })
-      .then(function() { return setString('droongaEngineHostName', 'hostname of the droonga-engine node'); })
-      .then(function() { return setInteger('droongaEnginePort', 'port number of the droonga-engine node'); })
-      .then(function() { return setString('tag', 'tag of the droonga-engine node'); })
-      .then(function() { return setString('defaultDataset', 'default dataset'); })
+    setIntegerOption('port', 'port')
+      .then(function() { return setStringOption('receiveHostName', 'hostname of this node'); })
+      .then(function() { return setStringOption('droongaEngineHostName', 'hostname of the droonga-engine node'); })
+      .then(function() { return setIntegerOption('droongaEnginePort', 'port number of the droonga-engine node'); })
+      .then(function() { return setStringOption('tag', 'tag of the droonga-engine node'); })
+      .then(function() { return setStringOption('defaultDataset', 'default dataset'); })
       .then(function() {
         if (serviceUserExists) {
           configValues.daemon = true;
@@ -269,11 +269,11 @@ function tryResetConfigs() {
           configValues.daemon = options.daemon;
         }
         else {
-          return setBoolean('daemon', 'run as a daemon?');
+          return setBooleanOption('daemon', 'run as a daemon?');
         }
       })
-      .then(function() { return setString('accessLogFile', 'path to the access log file'); })
-      .then(function() { return setString('systemLogFile', 'path to the system log file'); })
+      .then(function() { return setStringOption('accessLogFile', 'path to the access log file'); })
+      .then(function() { return setStringOption('systemLogFile', 'path to the system log file'); })
       .then(function() {
         if (!installedAsService) {
           if (options.quiet || serviceUserExists)
@@ -281,12 +281,12 @@ function tryResetConfigs() {
           else if (options.pidFileGiven)
             configValues.pidFile = options.pidFile;
           else
-            return setString('pidFile', 'path to the PID file');
+            return setStringOption('pidFile', 'path to the PID file');
         }
       })
-      .then(function() { return setInteger('cacheSize', 'maximum size of the response cache'); })
-      .then(function() { return setBoolean('enableTrustProxy', 'enable "trust proxy" configuration'); })
-      .then(function() { return setString('environment', 'environment'); })
+      .then(function() { return setIntegerOption('cacheSize', 'maximum size of the response cache'); })
+      .then(function() { return setBooleanOption('enableTrustProxy', 'enable "trust proxy" configuration'); })
+      .then(function() { return setStringOption('environment', 'environment'); })
       .then(resolve);
   });
 }
@@ -316,11 +316,11 @@ function writeNewConfigs() {
     configs.engine = engineConfigs;
 
     var configYaml = yaml.safeDump(configs);
-    safeWriteFileSync(configFilePath(), configYaml, { encoding: 'utf8' });
+    safeWriteFileSync(configFilePathSync(), configYaml, { encoding: 'utf8' });
 
     if (serviceUserExists) {
       uid(serviceUserName, serviceGroupName, function(error, uid, gid) {
-        fs.chownSync(configFilePath(), uid, gid);
+        fs.chownSync(configFilePathSync(), uid, gid);
         resolve();
       });
     }
@@ -356,9 +356,9 @@ checkServiceUserExistence()
   })
   .then(ensureHaveWritePermission)
   .then(function() {
-    parseOptions();
+    parseOptionsSync();
 
-    if (!configFileExists()) {
+    if (!configFileExistsSync()) {
       options.resetConfig = true;
     }
   })
