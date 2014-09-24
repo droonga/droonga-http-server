@@ -11,9 +11,7 @@
 NAME=droonga-http-server
 DAEMON=/usr/bin/$NAME
 export DROONGA_BASE_DIR=/home/$NAME/droonga
-PID_FILE=$DROONGA_BASE_DIR/$NAME.pid
-DAEMON_ARGS="--daemon --pid-file=$PID_FILE"
-export DROONGA_BASE_DIR=/home/$NAME/droonga
+DAEMON_ARGS="--daemon --pid-file=$NAME"
 
 [ -x $DAEMON ] || exit 0
 
@@ -27,7 +25,7 @@ start() {
 
 stop() {
 	echo -n "Shutting down $NAME: "
-  killproc -p $PID_FILE $DAEMON
+  killproc $DAEMON
   RET_CODE=$?
 	rm -f /var/lock/subsys/$NAME
 	return $RET_CODE

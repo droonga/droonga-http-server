@@ -15,10 +15,10 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=""
 NAME=droonga-http-server
 DAEMON=/usr/local/bin/$NAME
+export DROONGA_BASE_DIR=/home/$NAME/droonga
 PIDFILE=/var/run/$NAME.pid
 DAEMON_ARGS="--daemon --pid-file=$PIDFILE"
 SCRIPTNAME=/etc/init.d/$NAME
-export DROONGA_BASE_DIR=/home/$NAME/droonga
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
