@@ -98,7 +98,7 @@ if (options.cacheSize > 0) {
     var cache = new droonga.Cache({
       size: options.cacheSize,
     });
-    application.use("/statistics/cache",
+    application.use('/statistics/cache',
                     droonga.middleware.cacheStatistics(cache));
     application.use(droonga.middleware.cache(cache, {
       rules: cacheMiddlewareRules,
