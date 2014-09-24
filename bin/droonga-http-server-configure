@@ -42,7 +42,8 @@ function checkInstalledAsService() {
       if (error) {
         exec('env SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status', function(error, stdin, stdout) {
           installedAsService = stdin.indexOf('running') > -1 ||
-                                 stdin.indexOf('droonga-http-server is stopped') > -1;
+                                 stdin.indexOf('droonga-http-server is stopped') > -1 ||
+                                 stdin.indexOf('droonga-http-server dead') > -1;
           resolve(installedAsService);
         });
       }
