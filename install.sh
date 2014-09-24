@@ -279,7 +279,7 @@ install() {
 
   prepare_user
 
-  setup_configuration_directory $PLATFORM
+  setup_configuration_directory
 
   echo ""
   echo "Registering $NAME as a service..."
