@@ -278,7 +278,6 @@ function writeNewConfigs() {
     configs.port               = configValues.port;
     configs.access_log_file    = configValues.accessLogFile;
     configs.system_log_file    = configValues.systemLogFile;
-    configs.daemon             = true;
     configs.cache_size         = configValues.cacheSize;
     configs.enable_trust_proxy = configValues.enableTrustProxy;
     configs.environment        = configValues.environment;
