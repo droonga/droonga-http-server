@@ -266,6 +266,7 @@ register_service_in_centos() {
 
 
 install() {
+  echo "Preparing environment..."
   prepare_environment_in_$PLATFORM
 
   echo ""
