@@ -13,6 +13,7 @@ DAEMON=/usr/bin/$NAME
 export DROONGA_BASE_DIR=/home/$NAME/droonga
 PID_FILE=$DROONGA_BASE_DIR/$NAME.pid
 DAEMON_ARGS="--daemon --pid-file=$PID_FILE"
+export DROONGA_BASE_DIR=/home/$NAME/droonga
 
 [ -x $DAEMON ] || exit 0
 
