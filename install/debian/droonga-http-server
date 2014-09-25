@@ -115,6 +115,9 @@ case "$1" in
 	esac
 	;;
   status)
+    # NOTE: we must specify "-p $PIDFILE" option to track the status correctly
+    #       because we use "--exec" instead of "--name $NAME"
+    #       to start the daemon.
 	status_of_proc -p $PIDFILE "$DAEMON" "$NAME" && exit 0 || exit $?
 	;;
   #reload|force-reload)
