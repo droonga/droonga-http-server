@@ -81,15 +81,15 @@ function ensureHaveWritePermission() {
         return reject(error);
       }
 
-    testFile = baseDir + '/' + Date.now() + '.test';
-    touch(testFile, {}, function(error) {
-      if (error || !fs.existsSync(testFile)) {
-        onFailed();
-        return reject(error);
-      }
-      fs.unlinkSync(testFile);
-      resolve();
-    });
+      testFile = baseDir + '/' + Date.now() + '.test';
+      touch(testFile, {}, function(error) {
+        if (error || !fs.existsSync(testFile)) {
+          onFailed();
+          return reject(error);
+        }
+        fs.unlinkSync(testFile);
+        resolve();
+      });
     });
   });
 }
