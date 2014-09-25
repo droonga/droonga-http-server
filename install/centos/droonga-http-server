@@ -9,6 +9,8 @@
 . /etc/init.d/functions
 
 NAME=droonga-http-server
+USER=$NAME
+GROUP=droonga
 DAEMON=/usr/bin/$NAME
 export DROONGA_BASE_DIR=/home/$NAME/droonga
 DAEMON_ARGS="--daemon --pid-file=$NAME"
@@ -17,7 +19,7 @@ DAEMON_ARGS="--daemon --pid-file=$NAME"
 
 start() {
 	echo -n "Starting $NAME: "
-  daemon $DAEMON $DAEMON_ARGS
+  daemon --user $USER $DAEMON $DAEMON_ARGS
   RET_CODE=$?
 	touch /var/lock/subsys/$NAME
 	return $RET_CODE
