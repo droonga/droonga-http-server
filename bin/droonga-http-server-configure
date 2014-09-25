@@ -3,6 +3,7 @@
 
 var exec     = require('child_process').exec,
     fs       = require('fs'),
+    mkdirp   = require('mkdirp'),
     path     = require('path'),
     promptly = require('promptly'),
     Q        = require('q'),
@@ -67,18 +68,28 @@ function checkInstalledAsService() {
 }
 
 function ensureHaveWritePermission() {
+  function onFailed() {
+    console.log('You have no permission to write files under ' +
+                  '<' + baseDir + '>.')
+    console.log('Try again with right permission.')
+    process.exit(false)
+  }
   return Q.Promise(function(resolve, reject, notify) {
+    mkdirp(baseDir, { mode: '755' }, function(error) {
+      if (error) {
+        onFailed();
+        return reject(error);
+      }
+
     testFile = baseDir + '/' + Date.now() + '.test';
     touch(testFile, {}, function(error) {
       if (error || !fs.existsSync(testFile)) {
-        console.log('You have no permission to write files under ' +
-                      '<' + baseDir + '>.')
-        console.log('Try again with right permission.')
-        process.exit(false)
+        onFailed();
         return reject(error);
       }
       fs.unlinkSync(testFile);
       resolve();
+    });
     });
   });
 }

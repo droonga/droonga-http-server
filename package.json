@@ -26,6 +26,7 @@
     "express-droonga": ">=1.0.5",
     "express-session": "*",
     "js-yaml": "*",
+    "mkdirp": "*",
     "morgan": "*",
     "promptly": "*",
     "ps-node": "*",
