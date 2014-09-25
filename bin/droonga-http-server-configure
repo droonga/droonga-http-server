@@ -295,8 +295,9 @@ function writeNewConfigs() {
 
     if (serviceUserExists) {
       uid(serviceUserName, serviceGroupName, function(error, uid, gid) {
-        fs.chownSync(configFilePathSync(), uid, gid);
-        fs.chmodSync(configFilePathSync(), 'g+r');
+        var path = configFilePathSync();
+        fs.chownSync(path, uid, gid);
+        fs.chmodSync(path, 'g+r');
         resolve();
       });
     }
