@@ -37,7 +37,7 @@ NAME=droonga-http-server
 SCRIPT_URL=https://raw.githubusercontent.com/droonga/$NAME/master/install
 REPOSITORY_URL=https://github.com/droonga/$NAME.git
 USER=$NAME
-GROUP=$USER
+GROUP=droonga
 DROONGA_BASE_DIR=/home/$USER/droonga
 
 EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#master
@@ -87,11 +87,16 @@ prepare_environment() {
 }
 
 prepare_user() {
+  echo ""
+  echo "Preparing the user..."
+
+  groupadd $GROUP
+
   if ! exist_user $USER; then
-    echo ""
-    echo "Preparing the user..."
     useradd -m $USER
   fi
+
+  usermod -G $GROUP $USER
 }
 
 setup_configuration_directory() {
