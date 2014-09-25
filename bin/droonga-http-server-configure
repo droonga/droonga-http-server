@@ -48,9 +48,10 @@ function checkInstalledAsService() {
     if (!serviceUserName)
       return resolve(installedAsService);
 
+    //TODO: we should support systemd also...
     exec('service droonga-http-server status', function(error, stdin, stdout) {
       if (error) {
-        exec('env SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status', function(error, stdin, stdout) {
+        exec('service droonga-http-server status', function(error, stdin, stdout) {
           installedAsService = stdin.indexOf('running') > -1 ||
                                  stdin.indexOf('droonga-http-server is stopped') > -1 ||
                                  stdin.indexOf('droonga-http-server dead') > -1;
@@ -85,7 +86,8 @@ function ensureHaveWritePermission() {
 function checkRunningStatus() {
   return Q.Promise(function(resolve, reject, notify) {
     if (installedAsService) {
-      exec('env SYSTEMCTL_SKIP_REDIRECT=yes service droonga-http-server status',
+      //TODO: we should support systemd also...
+      exec('service droonga-http-server status',
            function(error, stdin, stdout) {
              running = !error && stdin.indexOf('running') > -1;
              resolve(running);
@@ -123,6 +125,7 @@ function ensureServiceStopped() {
 function stopService() {
   return Q.Promise(function(resolve, reject, notify) {
     if (installedAsService) {
+      //TODO: we should support systemd also...
       exec('service droonga-http-server stop',
            function(error, stdin, stdout) {
              resolve();
@@ -137,6 +140,7 @@ function stopService() {
 function startService() {
   return Q.Promise(function(resolve, reject, notify) {
     if (installedAsService) {
+      //TODO: we should support systemd also...
       exec('service droonga-http-server start',
            function(error, stdin, stdout) {
              resolve();
