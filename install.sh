@@ -202,7 +202,7 @@ determine_hostname() {
 use_master_express_droonga() {
   mv package.json package.json.bak
   cat package.json.bak | \
-    $sed -e "s;(express-droonga.+)\*;\1$EXPRESS_DROONGA_REPOSITORY_URL;" \
+    $sed -e "s;(express-droonga\"[^:]*:[^\"]*\")[^\"]+;\1$EXPRESS_DROONGA_REPOSITORY_URL;" \
     > package.json
 }
 
