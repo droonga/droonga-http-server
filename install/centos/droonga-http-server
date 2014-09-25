@@ -46,7 +46,9 @@ case "$1" in
     stop
     ;;
   status)
-    status $NAME
+    # Note: "-p" option is required to detect the status correctly!
+    #       (it fails without the too long $NAME - maybe.)
+    status -p $PIDFILE $NAME
     ;;
   restart)
     stop
