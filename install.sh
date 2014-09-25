@@ -37,6 +37,7 @@ NAME=droonga-http-server
 SCRIPT_URL=https://raw.githubusercontent.com/droonga/$NAME/master/install
 REPOSITORY_URL=https://github.com/droonga/$NAME.git
 USER=$NAME
+GROUP=$USER
 DROONGA_BASE_DIR=/home/$USER/droonga
 
 EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#master
@@ -159,7 +160,7 @@ setup_configuration_directory() {
                                   --receive-host-name=$HOST
   fi
 
-  chown -R $USER.$USER $DROONGA_BASE_DIR
+  chown -R $USER:$GROUP $DROONGA_BASE_DIR
 }
 
 
@@ -249,6 +250,10 @@ prepare_environment_in_debian() {
 }
 
 register_service_in_debian() {
+  pid_dir=/var/run/$NAME
+  mkdir -p $pid_dir
+  chown -R $USER:$GROUP $pid_dir
+
   install_service_script /etc/init.d/$NAME debian
   update-rc.d $NAME defaults
 }
