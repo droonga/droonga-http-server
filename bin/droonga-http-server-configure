@@ -315,11 +315,14 @@ function writeNewConfigs() {
           return reject(error);
         var path = configFilePathSync();
         fs.chownSync(path, uid, gid);
-        chmod(path, { group: { read: true }}, function(error) {
-          if (error)
-            return reject(error);
-          resolve();
-        });
+        chmod(path,
+              { group:  { read: true },
+                others: { read: true }},
+              function(error) {
+                if (error)
+                  return reject(error);
+                resolve();
+              });
       });
     }
     else {
