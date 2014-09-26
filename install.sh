@@ -250,7 +250,7 @@ installed_version() {
 prepare_environment_in_debian() {
   apt-get update
   apt-get -y upgrade
-  apt-get install -y nodejs nodejs-legacy npm
+  apt-get install -y curl nodejs nodejs-legacy npm
 
   if [ "$VERSION" = "master" ]; then
     apt-get install -y git
@@ -274,6 +274,8 @@ prepare_environment_in_centos() {
     cat $backup | $sed -e "s/enabled=1/enabled=0/" \
       > $epel_repo
   fi
+  yum --enablerepo=epel update
+  yum -y install curl
   yum -y --enablerepo=epel install npm
 
   if [ "$VERSION" = "master" ]; then
