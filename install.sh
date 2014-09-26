@@ -107,14 +107,14 @@ setup_configuration_directory() {
   [ ! -e $DROONGA_BASE_DIR ] &&
     mkdir $DROONGA_BASE_DIR
 
-  config_file="$DROONGA_BASE_DIR/$NAME.yaml"
+  local config_file="$DROONGA_BASE_DIR/$NAME.yaml"
   if [ ! -e $config_file ]; then
-    should_reconfigure_engine_host="false"
-    should_reconfigure_host="false"
+    local should_reconfigure_engine_host="false"
+    local should_reconfigure_host="false"
 
     if [ "$ENGINE_HOST" = "Auto Detect" ]; then
       ENGINE_HOST=""
-      engine_config="/home/droonga-engine/droonga/droonga-engine.yaml"
+      local engine_config="/home/droonga-engine/droonga/droonga-engine.yaml"
       if [ -e $engine_config ]; then
         ENGINE_HOST=$(cat $engine_config | grep -E "^ *host *:" | \
                       cut -d ":" -f 2 | $sed -e "s/^ +| +\$//g")
@@ -172,8 +172,8 @@ setup_configuration_directory() {
 
 guess_global_hostname() {
   if hostname -d > /dev/null 2>&1; then
-    domain=$(hostname -d)
-    hostname=$(hostname -s)
+    local domain=$(hostname -d)
+    local hostname=$(hostname -s)
     if [ "$domain" != "" ]; then
       echo "$hostname.$domain"
       return 0
@@ -184,17 +184,17 @@ guess_global_hostname() {
 }
 
 determine_hostname() {
-  global_hostname=$(guess_global_hostname)
+  local global_hostname=$(guess_global_hostname)
   if [ "$global_hostname" != "" ]; then
     echo "$global_hostname"
     return 0
   fi
 
-  address=$(hostname -i | \
-            $sed -e "s/127\.[0-9]+\.[0-9]+\.[0-9]+//g" \
-                 -e "s/  +/ /g" \
-                 -e "s/^ +| +\$//g" |\
-            cut -d " " -f 1)
+  local address=$(hostname -i | \
+                  $sed -e "s/127\.[0-9]+\.[0-9]+\.[0-9]+//g" \
+                       -e "s/  +/ /g" \
+                       -e "s/^ +| +\$//g" |\
+                  cut -d " " -f 1)
   if [ "$address" != "" ]; then
     echo "$address"
     return 0
