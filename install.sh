@@ -47,7 +47,7 @@ EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#mast
 : ${HOST:=Auto Detect}
 : ${ENGINE_HOST:=Auto Detect}
 
-REQUIRED_COMMANDS=npm
+REQUIRED_COMMANDS="curl npm"
 [ "$VERSION" = "master" ] &&
   REQUIRED_COMMANDS="$REQUIRED_COMMANDS git"
 
