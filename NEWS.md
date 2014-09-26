@@ -5,6 +5,8 @@
  * The installation script is now available.
    It automatically installs required softwares and configure the `droonga-http-server` as a system service.
    Currently it works only for Debian, Ubuntu, and CentOS 7.
+ * The service works as a process belonging to a user `droonga-http-server` who is specific for the service.
+   The configuration directory for the service is placed under the home directory of the user.
  * A static configuration file to define default parameters (`port` and so on) is now available.
    It must be placed into the configuration directory specified by the environment variable `DROONGA_BASE_DIR`.
    You don't have to run `droonga-http-server` command with many options, anymore.
