@@ -101,7 +101,7 @@ function checkRunningStatus() {
       //TODO: we should support systemd also...
       exec('service droonga-http-server status',
            function(error, stdin, stdout) {
-             running = !error && stdin.indexOf('is running') > -1;
+             running = !error;
              resolve(running);
            });
     }
