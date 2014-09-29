@@ -84,7 +84,10 @@ exist_all_commands() {
 }
 
 exist_yum_repository() {
-  yum repolist | grep --quiet "$1"
+  if ! yum --enablerepo=$1 repolist; then
+    return 1
+  fi
+  yum --enablerepo=$1 repolist | grep --quiet "$1"
 }
 
 exist_user() {
@@ -275,6 +278,8 @@ prepare_environment_in_centos() {
     mv $epel_repo $backup
     cat $backup | $sed -e "s/enabled=1/enabled=0/" \
       > $epel_repo
+
+    yum -y --enablerepo=epel makecache
   fi
   yum --enablerepo=epel update
   yum -y install curl
