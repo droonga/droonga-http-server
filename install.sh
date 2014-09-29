@@ -268,11 +268,8 @@ prepare_environment_in_debian() {
 # ========================= for CentOS 7 ============================
 prepare_environment_in_centos() {
   if ! exist_yum_repository epel; then
-    # epel-release is not installed, so install it.
     yum -y install epel-release
-    # however, we should disable it by default because
-    # the system administrator won't expect to use it
-    # in his daily use.
+    # disable it by default!
     epel_repo=/etc/yum.repos.d/epel.repo
     backup=/tmp/$(basename $epel_repo).bak
     mv $epel_repo $backup
