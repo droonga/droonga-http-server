@@ -1,6 +1,6 @@
 # News
 
-## 1.0.7: 2014-09-29 (planned)
+## 1.0.7: 2014-09-29
 
  * The installation script is now available.
    It automatically installs required softwares and configure the `droonga-http-server` as a system service.
