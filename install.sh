@@ -61,13 +61,8 @@ ensure_root() {
 
 guess_platform() {
   if [ -e /etc/debian_version ] || [ -e /etc/debian_release ]; then
-#    if lsb_release -i | grep --quiet Ubuntu; then
-#      echo "ubuntu"
-#      return 0
-#    elif lsb_release -i | grep --quiet Debian; then
-      echo "debian"
-      return 0
-#    fi
+    echo "debian"
+    return 0
   elif [ -e /etc/centos-release ]; then
     echo "centos"
     return 0
