@@ -375,5 +375,6 @@ checkServiceUserExistence()
   .then(finish)
   .catch(function(error) {
     console.error(error);
+    console.error(error.stack);
     process.exit(false);
   });
