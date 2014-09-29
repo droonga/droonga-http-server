@@ -31,7 +31,7 @@ NotInstalledAsServiceError.prototype = {
   message: 'not installed as a service'
 };
 NotInstalledAsServiceError.isInstance = function(error) {
-  return error.message.indexOf(this.prototype.message) > -1;
+  return String(error.message).indexOf(this.prototype.message) > -1;
 };
 
 
