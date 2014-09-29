@@ -308,6 +308,11 @@ install() {
     npm install -g droonga-http-server
   fi
 
+  if ! exist_command droonga-http-server; then
+    echo "ERROR: Failed to install $NAME!"
+    exit 1
+  fi
+
   curl -o $TEMPDIR/functions.sh $(download_url "install/$PLATFORM/functions.sh")
   source $TEMPDIR/functions.sh
 
