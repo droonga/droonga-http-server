@@ -25,7 +25,7 @@ var installedAsService = false;
 var running            = false;
 
 function NotInstalledAsServiceError() {
-  return new Error(this.prototype.message);
+  return new Error(NotInstalledAsServiceError.prototype.message);
 }
 NotInstalledAsServiceError.prototype = {
   message: 'not installed as a service'
