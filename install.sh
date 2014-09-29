@@ -319,7 +319,7 @@ install() {
   echo "Successfully installed $NAME."
 }
 
-eusure_root
+ensure_root
 
 PLATFORM=$(guess_platform)
 if [ "$PLATFORM" = "" ]; then
