@@ -45,7 +45,9 @@ EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#mast
 
 : ${VERSION:=release}
 : ${HOST:=Auto Detect}
+: ${PORT:=10041}
 : ${ENGINE_HOST:=Auto Detect}
+: ${ENGINE_PORT:=Auto Detect}
 
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
@@ -146,6 +148,17 @@ setup_configuration_directory() {
       fi
     fi
 
+    if [ "$ENGINE_PORT" = "Auto Detect" ]; then
+      ENGINE_PORT=$(detect_engine_config port)
+      if [ "$ENGINE_PORT" != "" ]; then
+        echo "The droonga-engine service is detected on this node."
+        echo "The droonga-http-server is configured to be connected"
+        echo "to this node with the port $ENGINE_PORT."
+      else
+        ENGINE_PORT=10031
+      fi
+    fi
+
     [ "$HOST" = "Auto Detect" ] &&
       HOST=$(determine_hostname)
 
@@ -177,7 +190,9 @@ setup_configuration_directory() {
 
     droonga-http-server-configure --quiet \
                                   --droonga-engine-host-name=$ENGINE_HOST \
-                                  --receive-host-name=$HOST
+                                  --droonga-engine-port=$ENGINE_PORT \
+                                  --receive-host-name=$HOST \
+                                  --port=$PORT
     if [ $? -ne 0 ]; then
       echo "ERROR: Failed to configure $NAME!"
       exit 1
