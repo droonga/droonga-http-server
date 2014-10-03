@@ -108,6 +108,17 @@ prepare_user() {
   return 0
 }
 
+detect_engine_config() {
+  local config_key=$1
+  local config_value=""
+  local engine_config="/home/droonga-engine/droonga/droonga-engine.yaml"
+  if [ -e $engine_config ]; then
+    config_value=$(cat $engine_config | grep -E "^ *$config_key *:" | \
+                   cut -d ":" -f 2 | $sed -e "s/^ +| +\$//g")
+  fi
+  echo $config_value
+}
+
 setup_configuration_directory() {
   echo ""
   echo "Setting up the configuration directory..."
@@ -121,12 +132,7 @@ setup_configuration_directory() {
     local should_reconfigure_host="false"
 
     if [ "$ENGINE_HOST" = "Auto Detect" ]; then
-      ENGINE_HOST=""
-      local engine_config="/home/droonga-engine/droonga/droonga-engine.yaml"
-      if [ -e $engine_config ]; then
-        ENGINE_HOST=$(cat $engine_config | grep -E "^ *host *:" | \
-                      cut -d ":" -f 2 | $sed -e "s/^ +| +\$//g")
-      fi
+      ENGINE_HOST=$(detect_engine_config host)
       if [ "$ENGINE_HOST" != "" ]; then
         echo "The droonga-engine service is detected on this node."
         echo "The droonga-http-server is configured to be connected"
