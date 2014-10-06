@@ -1,5 +1,10 @@
 # News
 
+## 1.0.8: 2014-10-29 (planned)
+
+ * Works correctly even if you restarted the computer itself.
+   PID file for the daemon is created under the DROONGA_BASE_DIR.
+
 ## 1.0.7: 2014-09-29
 
  * The installation script is now available.
