@@ -24,9 +24,6 @@ if (options.daemon) {
 }
 
 
-if (options.systemLogLevel)
-  winston.setLevels(options.systemLogLevel);
-
 var logger;
 if (options.systemLogFile && options.systemLogFile != '-') {
   options.systemLogFile = path.resolve(baseDir, options.systemLogFile);
@@ -38,6 +35,8 @@ if (options.systemLogFile && options.systemLogFile != '-') {
       })
     ]
   });
+  if (options.systemLogLevel)
+    logger.transports.file.level = options.systemLogLevel.toLowerCase();
 } else {
   var transports = [];
   if (!options.daemon) {
@@ -46,10 +45,9 @@ if (options.systemLogFile && options.systemLogFile != '-') {
   logger = new winston.Logger({
     transports: transports
   });
+  if (options.systemLogLevel)
+    logger.transports.console.level = options.systemLogLevel.toLowerCase();
 }
-logger.trace = function() { // alias
-  this.silly.apply(this, arguments);
-};
 
 if (options.pidFile) {
   options.pidFile = path.resolve(baseDir, options.pidFile);
