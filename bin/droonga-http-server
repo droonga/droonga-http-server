@@ -35,8 +35,7 @@ if (options.systemLogFile && options.systemLogFile != '-') {
       })
     ]
   });
-  if (options.systemLogLevel)
-    logger.transports.file.level = options.systemLogLevel.toLowerCase();
+  logger.transports.file.level = options.systemLogLevel.toLowerCase();
 } else {
   var transports = [];
   if (!options.daemon) {
@@ -45,8 +44,7 @@ if (options.systemLogFile && options.systemLogFile != '-') {
   logger = new winston.Logger({
     transports: transports
   });
-  if (options.systemLogLevel)
-    logger.transports.console.level = options.systemLogLevel.toLowerCase();
+  logger.transports.console.level = options.systemLogLevel.toLowerCase();
 }
 
 if (options.pidFile) {
