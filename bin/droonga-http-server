@@ -23,6 +23,10 @@ if (options.daemon) {
   daemon();
 }
 
+
+if (options.systemLogLevel)
+  winston.setLevels(options.systemLogLevel);
+
 var logger;
 if (options.systemLogFile && options.systemLogFile != '-') {
   options.systemLogFile = path.resolve(baseDir, options.systemLogFile);
@@ -43,6 +47,9 @@ if (options.systemLogFile && options.systemLogFile != '-') {
     transports: transports
   });
 }
+logger.trace = function() { // alias
+  this.silly.apply(this, arguments);
+};
 
 if (options.pidFile) {
   options.pidFile = path.resolve(baseDir, options.pidFile);
