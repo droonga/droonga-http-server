@@ -279,8 +279,8 @@ function tryResetConfigs() {
       .then(function() { return setStringOption('accessLogFile', 'path to the access log file'); })
       .then(function() { return setStringOption('systemLogFile', 'path to the system log file'); })
       .then(function() { return setStringOption('systemLogLevel',
-                                                'log level for the system log (one of ' +
-                                                   'silly|debug|verbose|info|warn|error)'); })
+                                                'log level for the system log (' +
+                                                   'silly,debug,verbose,info|warn,error)'); })
       .then(function() { return setIntegerOption('cacheSize', 'maximum size of the response cache'); })
       .then(function() { return setBooleanOption('enableTrustProxy', 'enable "trust proxy" configuration'); })
       .then(function() { return setStringOption('environment', 'environment'); })
