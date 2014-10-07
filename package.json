@@ -1,7 +1,7 @@
 {
   "name": "droonga-http-server",
   "description": "An HTTP Protocol Adapter for the Droonga Engine.",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "Droonga project <droonga@groonga.org>",
   "contributors": [
     {
