@@ -24,7 +24,7 @@
     "commander": "*",
     "daemon": "*",
     "express": ">=4.0",
-    "express-droonga": ">=1.0.5",
+    "express-droonga": ">=1.0.6",
     "express-session": "*",
     "js-yaml": "*",
     "mkdirp": "*",
