@@ -2,7 +2,7 @@
 
 ## 1.0.8: 2014-10-29 (planned)
 
- * Works correctly even if you restarted the computer itself.
+ * Works correctly as a service even if you restarted the computer itself.
  * Log level of the system log is now customizable.
    You just have to put a line like `system_log_level: debug` into the `droonga-http-server.yaml`.
    And, `droonga-http-server-configure` also asks the log level.
