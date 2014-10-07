@@ -1,6 +1,6 @@
 # News
 
-## 1.0.8: 2014-10-29 (planned)
+## 1.0.8: 2014-10-07
 
  * Works correctly as a service even if you restarted the computer itself.
  * Log level of the system log is now customizable.
