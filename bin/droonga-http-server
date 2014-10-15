@@ -84,7 +84,7 @@ if (options.accessLogFile) {
   var accessLogOptions = {
     stream: accessLogStream
   };
-  application.use(morgan(accessLogOptions));
+  application.use(morgan("combined", accessLogOptions));
 }
 application.use(cookieParser('secret key'));
 application.use(session({
