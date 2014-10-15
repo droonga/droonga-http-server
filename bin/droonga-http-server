@@ -89,6 +89,8 @@ if (options.accessLogFile) {
 application.use(cookieParser('secret key'));
 application.use(session({
   secret: 'secret key',
+  resave: true,
+  saveUninitialized: true,
   store:  sessionStore
 }));
 application.use(responseTime());
