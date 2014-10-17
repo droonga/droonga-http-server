@@ -23,7 +23,7 @@
     "cookie-parser": "*",
     "commander": "*",
     "daemon": "*",
-    "express": ">=4.0",
+    "express": ">=4.9",
     "express-droonga": ">=1.0.6",
     "express-session": "*",
     "js-yaml": "*",
