@@ -125,6 +125,16 @@ application.droonga({
   plugins:         options.plugins
 });
 
+application.connectionPool.updateHostNamesFromCatalog()
+  .then(function(hostNames) {
+    logger.info('List of droonga-engine hosts is successfully initialized from the remote catalog.');
+    logger.info(hostNames);
+  })
+  .catch(function(error) {
+    logger.error('Failed to initialize the list of droonga-engine hosts from the remote catalog.');
+    logger.error(error);
+  });
+
 server.listen(options.port);
 
 function shutdown() {
