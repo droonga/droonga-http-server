@@ -1,5 +1,12 @@
 # News
 
+## 1.0.9: 2014-11-29 (planned)
+
+ * Supports multiple Droonga Engine nodes as its backends.
+   Now droonga-http-server can work like a load balancer.
+ * List of connecting Droonga Engine nodes can be updated based on the `catalog.json`,
+   which is downloaded from a remote Droonga Engine node.
+
 ## 1.0.8: 2014-10-07
 
  * Works correctly as a service even if you restarted the computer itself.
