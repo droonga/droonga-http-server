@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+// -*- js -*-
+var SerfClient = require('../lib/serf/client');
+
+var defaultConfigs = require('../lib/default-configs');
+var options = require('../lib/server-options');
+options = options.define().parse(process.argv);
+
+var baseDir = defaultConfigs.baseDir;
+
+var client = new SerfClient({
+  host:       options.droongaEngineHostName,
+  enginePort: options.droongaEnginePort,
+  tag:        options.tag
+});
+
+client.getLiveEngineNodes()
+  .then(function(members) {
+    var hosts = members.map(function(member) {
+      return member.HostName;
+    });
+    console.log(hosts.join('\n'));
+    process.exit(true);
+  })
+  .catch(function(error) {
+    console.error(error);
+    process.exit(false);
+  });

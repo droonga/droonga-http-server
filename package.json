@@ -33,6 +33,7 @@
     "ps-node": "*",
     "q": "*",
     "response-time": "*",
+    "serf-rpc": "*",
     "touch": "*",
     "uid-number": "*",
     "winston": "*"
