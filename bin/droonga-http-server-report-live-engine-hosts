@@ -2,11 +2,8 @@
 // -*- js -*-
 var SerfClient = require('../lib/serf/client');
 
-var defaultConfigs = require('../lib/default-configs');
 var options = require('../lib/server-options');
 options = options.define().parse(process.argv);
-
-var baseDir = defaultConfigs.baseDir;
 
 var client = new SerfClient({
   host:       options.droongaEngineHostName,
