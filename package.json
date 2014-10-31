@@ -40,7 +40,8 @@
   },
   "bin": {
     "droonga-http-server": "./bin/droonga-http-server",
-    "droonga-http-server-configure": "./bin/droonga-http-server-configure"
+    "droonga-http-server-configure": "./bin/droonga-http-server-configure",
+    "droonga-http-server-report-live-engine-hosts": "./bin/droonga-http-server-report-live-engine-hosts"
   },
   "main": "index",
   "engines": {
