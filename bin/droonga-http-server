@@ -125,13 +125,13 @@ application.droonga({
   plugins:         options.plugins
 });
 
-application.connectionPool.updateHostNamesFromCatalog()
+application.connectionPool.updateHostNamesFromCluster()
   .then(function(hostNames) {
-    logger.info('List of droonga-engine hosts is successfully initialized from the remote catalog.');
+    logger.info('List of droonga-engine hosts is successfully initialized from the cluster.');
     logger.info(hostNames);
   })
   .catch(function(error) {
-    logger.error('Failed to initialize the list of droonga-engine hosts from the remote catalog.');
+    logger.error('Failed to initialize the list of droonga-engine hosts from the cluster.');
     logger.error(error);
   });
 
