@@ -33,15 +33,13 @@
     "ps-node": "*",
     "q": "*",
     "response-time": "*",
-    "serf-rpc": "*",
     "touch": "*",
     "uid-number": "*",
     "winston": "*"
   },
   "bin": {
     "droonga-http-server": "./bin/droonga-http-server",
-    "droonga-http-server-configure": "./bin/droonga-http-server-configure",
-    "droonga-http-server-report-live-engine-hosts": "./bin/droonga-http-server-report-live-engine-hosts"
+    "droonga-http-server-configure": "./bin/droonga-http-server-configure"
   },
   "main": "index",
   "engines": {
