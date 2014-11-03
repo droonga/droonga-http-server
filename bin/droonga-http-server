@@ -135,7 +135,7 @@ application.connectionPool.updateHostNamesFromCluster()
     logger.error(error);
   });
 
-server.listen(options.port);
+server.listen(options.port, options.host);
 
 function shutdown() {
   server.close();
