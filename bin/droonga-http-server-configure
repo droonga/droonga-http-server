@@ -116,7 +116,7 @@ function ensureServiceStopped() {
     if (!running)
       return resolve();
 
-    if (options.quiet)
+    if (options.noPrompt)
       return stopService().then(resolve);
 
     console.log('The droonga-http-server service is now running.');
@@ -167,8 +167,13 @@ function startService() {
 function parseOptionsSync() {
   options = require('../lib/server-options');
   options = options
-              .add('--quiet',
+              .add('--no-prompt',
                    'Run with no prompt.')
+              .add('--quiet',
+                   'Same to --no-prompt. For backward compatibility.',
+                   function(newValue) {
+                     options.noPrompt = newValue;
+                   })
               .add('--reset-config',
                    'Regenerate the configuration file "droonga-http-server.yaml".')
               .define()
@@ -185,7 +190,7 @@ function configFileExistsSync() {
 
 function confirmToReconfigure() {
   return Q.Promise(function(resolve, reject, notify) {
-    if (!options.quiet && !options.resetConfig) {
+    if (!options.noPrompt && !options.resetConfig) {
       promptly.confirm('Do you want the configuration file ' +
                           '"droonga-http-server.yaml" to be regenerated? (y/N): ',
                        { default: 'no',
@@ -205,7 +210,7 @@ var configValues = {};
 
 function setStringOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
-    if (options.quiet) {
+    if (options.noPrompt) {
       configValues[name] = options[name];
       resolve();
     }
@@ -223,7 +228,7 @@ function setStringOption(name, message) {
 
 function setIntegerOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
-    if (options.quiet) {
+    if (options.noPrompt) {
       configValues[name] = options[name];
       resolve();
     }
@@ -244,7 +249,7 @@ function setIntegerOption(name, message) {
 
 function setBooleanOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
-    if (options.quiet) {
+    if (options.noPrompt) {
       configValues[name] = options[name];
       resolve();
     }

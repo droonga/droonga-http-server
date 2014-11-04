@@ -188,6 +188,7 @@ setup_configuration_directory() {
       echo "*******************************************************"
     fi
 
+    # we should use --no-prompt instead of --quiet, for droonga-http-server 1.0.9 and later.
     droonga-http-server-configure --quiet \
                                   --droonga-engine-host-name=$ENGINE_HOST \
                                   --droonga-engine-port=$ENGINE_PORT \
