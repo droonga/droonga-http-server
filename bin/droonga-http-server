@@ -122,7 +122,8 @@ application.droonga({
   receiveHostName: options.receiveHostName,
   hostName:        options.droongaEngineHostName,
   port:            options.droongaEnginePort,
-  plugins:         options.plugins
+  plugins:         options.plugins,
+  serf:            path.resolve(baseDir, 'serf')
 });
 
 application.connectionPool.startSyncHostNamesFromCluster();
