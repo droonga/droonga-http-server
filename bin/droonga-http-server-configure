@@ -116,7 +116,7 @@ function ensureServiceStopped() {
     if (!running)
       return resolve();
 
-    if (options.noPrompt)
+    if (!options.prompt)
       return stopService().then(resolve);
 
     console.log('The droonga-http-server service is now running.');
@@ -190,7 +190,7 @@ function configFileExistsSync() {
 
 function confirmToReconfigure() {
   return Q.Promise(function(resolve, reject, notify) {
-    if (!options.noPrompt && !options.resetConfig) {
+    if (options.prompt && !options.resetConfig) {
       promptly.confirm('Do you want the configuration file ' +
                           '"droonga-http-server.yaml" to be regenerated? (y/N): ',
                        { default: 'no',
@@ -210,7 +210,7 @@ var configValues = {};
 
 function setStringOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
-    if (options.noPrompt) {
+    if (!options.prompt) {
       configValues[name] = options[name];
       resolve();
     }
@@ -228,7 +228,7 @@ function setStringOption(name, message) {
 
 function setIntegerOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
-    if (options.noPrompt) {
+    if (!options.prompt) {
       configValues[name] = options[name];
       resolve();
     }
@@ -249,7 +249,7 @@ function setIntegerOption(name, message) {
 
 function setBooleanOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
-    if (options.noPrompt) {
+    if (!options.prompt) {
       configValues[name] = options[name];
       resolve();
     }
