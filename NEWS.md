@@ -4,9 +4,8 @@
 
  * Supports multiple Droonga Engine nodes as its backends.
    Now droonga-http-server can work like a load balancer.
- * On the startup, the list of connecting Droonga Engine nodes is automatically updated
+ * The list of connecting Droonga Engine nodes is automatically updated
    based on the actual list of active members in the cluster.
-   (It should be updated dynamically by changes of the cluster itself, but not yet.)
 
 ## 1.0.8: 2014-10-07
 
