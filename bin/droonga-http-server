@@ -127,17 +127,13 @@ application.droonga({
 
 application.connectionPool.updateHostNamesFromCluster()
   .then(function(hostNames) {
-    logger.info('List of droonga-engine hosts is successfully initialized from the cluster.');
-    logger.info(hostNames);
-  })
-  .catch(function(error) {
-    logger.error('Failed to initialize the list of droonga-engine hosts from the cluster.');
-    logger.error(error);
+    application.connectionPool.startWatchClusterChanges();
   });
 
 server.listen(options.port, options.host);
 
 function shutdown() {
+  application.connectionPool.endWatchClusterChanges();
   server.close();
   if (options.pidFile && fs.existsSync(options.pidFile)) {
     fs.unlinkSync(options.pidFile);
