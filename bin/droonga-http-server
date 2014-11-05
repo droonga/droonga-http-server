@@ -123,15 +123,13 @@ application.droonga({
   hostName:        options.droongaEngineHostName,
   port:            options.droongaEnginePort,
   plugins:         options.plugins,
-  serf:            path.resolve(baseDir, 'serf')
+  serf:            path.resolve(baseDir, 'serf'),
+  syncHostNames:   true
 });
-
-application.connectionPool.startSyncHostNamesFromCluster();
 
 server.listen(options.port, options.host);
 
 function shutdown() {
-  application.connectionPool.stopSyncHostNamesFromCluster();
   server.close();
   if (options.pidFile && fs.existsSync(options.pidFile)) {
     fs.unlinkSync(options.pidFile);
