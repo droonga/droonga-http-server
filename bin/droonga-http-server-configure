@@ -170,14 +170,13 @@ function parseOptionsSync() {
               .add('--no-prompt',
                    'Run with no prompt.')
               .add('--quiet',
-                   'Same to --no-prompt. For backward compatibility.',
-                   function(newValue) {
-                     options.noPrompt = newValue;
-                   })
+                   'Same to --no-prompt. For backward compatibility.')
               .add('--reset-config',
                    'Regenerate the configuration file "droonga-http-server.yaml".')
               .define()
               .parse(process.argv);
+  if (options.quiet)
+    options.prompt = false;
 }
 
 function configFilePathSync() {
