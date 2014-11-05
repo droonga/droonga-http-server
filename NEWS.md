@@ -2,6 +2,14 @@
 
 ## 1.0.9: 2014-11-29 (planned)
 
+ * A new `--host` option is available to restrict the listening IP address.
+   The default value is `0.0.0.0` (meaning `listen all IP addresses`).
+ * A new `--disable-trust-proxy` option is available to disable the feature
+   even if it is activated by the static configuration file.
+ * The `daemon` option is now ignored in the static configuration file.
+   Now, you always have to specify `--daemon` option for the `droonga-http-server` command
+   to start it as a daemon.
+ * The `droonga-http-server-configure` command now shows prompts for all options always.
  * Supports multiple Droonga Engine nodes as its backends.
    Now droonga-http-server can work like a load balancer.
  * The list of connecting Droonga Engine nodes is automatically updated
