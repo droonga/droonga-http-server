@@ -127,13 +127,29 @@ application.droonga({
   syncHostNames:   true
 });
 
-server.listen(options.port, options.host);
+try {
+  logger.info('Start to listen ' + options.host + ':' + options.port);
+  server.on('error', shutdown);
+  server.listen(options.port, options.host);
+} catch(error) {
+  shutdown(error);
+}
 
-function shutdown() {
-  server.close();
-  if (options.pidFile && fs.existsSync(options.pidFile)) {
-    fs.unlinkSync(options.pidFile);
+function shutdown(error) {
+  if (error) {
+    logger.error('Shutting down the server by an unexpected error.');
+    logger.error(error);
   }
+
+  try {
+    server.close();
+  } catch(error) {
+    logger.error('Unexpected error on closing of the server.');
+    logger.error(error);
+  }
+
+  if (options.pidFile && fs.existsSync(options.pidFile))
+    fs.unlinkSync(options.pidFile);
 }
 
 process.on('SIGINT', function() {
