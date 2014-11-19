@@ -106,17 +106,19 @@ if (options.cacheSize > 0) {
     '/d/select'        // Groonga's "select"
   ];
   var cacheMiddlewareRules = [
-    { regex: new RegExp('^(' + cachableEndpoints.join('|') + ')') }
-    // { regex: /^\// }
+    { regex:        new RegExp('^(' + cachableEndpoints.join('|') + ')'),
+      ttlInSeconds: options.cacheTtlInSeconds }
+    // { regex:        /^\//,
+    //   ttlInSeconds: options.cacheTtlInSeconds }
   ];
   if (droonga.Cache) {
     var cache = new droonga.Cache({
-      size: options.cacheSize,
+      size: options.cacheSize
     });
     application.use('/statistics/cache',
                     droonga.middleware.cacheStatistics(cache));
     application.use(droonga.middleware.cache(cache, {
-      rules: cacheMiddlewareRules,
+      rules:  cacheMiddlewareRules,
       logger: logger
     }));
   }
