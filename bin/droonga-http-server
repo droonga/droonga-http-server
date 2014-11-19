@@ -122,6 +122,11 @@ if (options.cacheSize > 0) {
       rules:  cacheMiddlewareRules,
       logger: logger
     }));
+    application.delete('/cache', function(request, response, next) {
+      cache.clear(function(error) {
+        response.jsonp(error ? false : true);
+      });
+    });
   }
 }
 
