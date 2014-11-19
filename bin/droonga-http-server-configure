@@ -306,6 +306,7 @@ function tryResetConfigs() {
                                                 'log level for the system log (' +
                                                    'silly,debug,verbose,info,warn,error)'); })
       .then(function() { return setIntegerOption('cacheSize', 'maximum size of the response cache'); })
+      .then(function() { return setIntegerOption('cacheTtlInSeconds', 'time to live of cached responses, in seconds'); })
       .then(function() { return setBooleanOption('enableTrustProxy', 'enable "trust proxy" configuration'); })
       .then(function() { return setStringOption('environment', 'environment'); })
       .then(resolve);
