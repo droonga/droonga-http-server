@@ -294,7 +294,8 @@ function tryResetConfigs() {
     options.systemLogFile = 'droonga-http-server.system.log';
     options.environment = 'production';
 
-    setIntegerOption('port', 'port')
+    setIntegerOption('host', 'IP address to accept requests from clients (0.0.0.0 means "any IP address")')
+      .then(function() { return setIntegerOption('port', 'port'); })
       .then(function() { return setStringOption('receiveHostName', 'hostname of this node'); })
       .then(function() { return setStringsOption('droongaEngineHostNames', 'hostnames of droonga-engine nodes'); })
       .then(function() { return setIntegerOption('droongaEnginePort', 'port number of the droonga-engine node'); })
@@ -319,6 +320,7 @@ function writeNewConfigs() {
       return resolve();
 
     var configs = {};
+    configs.host               = configValues.host;
     configs.port               = configValues.port;
     configs.access_log_file    = configValues.accessLogFile;
     configs.system_log_file    = configValues.systemLogFile;
