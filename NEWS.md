@@ -4,12 +4,16 @@
 
  * A new `--host` option is available to restrict the listening IP address.
    The default value is `0.0.0.0` (meaning `listen all IP addresses`).
+ * A new `--cache-ttl-in-seconds` option is available to set the time to live of cached responses, in seconds.
+   The default value is `60` (meaning `1 minute`).
  * A new `--disable-trust-proxy` option is available to disable the feature
    even if it is activated by the static configuration file.
  * The `daemon` option is now ignored in the static configuration file.
    Now, you always have to specify `--daemon` option for the `droonga-http-server` command
    to start it as a daemon.
  * The `droonga-http-server-configure` command now shows prompts for all options always.
+ * Responses for most commands are never cached.
+   Now, only responses based on `search` or Groonga's `select` commands are cached.
  * Supports multiple Droonga Engine nodes as its backends.
    Now droonga-http-server can work like a load balancer.
  * The list of connecting Droonga Engine nodes is automatically updated
