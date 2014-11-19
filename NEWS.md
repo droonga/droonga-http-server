@@ -14,6 +14,8 @@
  * The `droonga-http-server-configure` command now shows prompts for all options always.
  * Responses for most commands are never cached.
    Now, only responses based on `search` or Groonga's `select` commands and the administration page are cached.
+ * A new endopoint `/cache` is introduced to clear all response caches.
+   To clear cached contents, send an HTTP `DELETE` request to the path.
  * Supports multiple Droonga Engine nodes as its backends.
    Now droonga-http-server can work like a load balancer.
  * The list of connecting Droonga Engine nodes is automatically updated
