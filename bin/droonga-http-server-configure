@@ -324,6 +324,7 @@ function writeNewConfigs() {
     configs.system_log_file    = configValues.systemLogFile;
     configs.system_log_level   = configValues.systemLogLevel;
     configs.cache_size         = configValues.cacheSize;
+    configs.cache_ttl_in_seconds = configValues.cacheTtlInSeconds;
     configs.enable_trust_proxy = configValues.enableTrustProxy;
     configs.environment        = configValues.environment;
 
