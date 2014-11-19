@@ -96,8 +96,18 @@ application.use(session({
 application.use(responseTime());
 application.use('/', express.static(path.normalize(__dirname + '/../public/groonga-admin')));
 if (options.cacheSize > 0) {
+  //XXX Activate response cache only for some commands.
+  //    In future versions, this restriction should be controlled by
+  //    some information (a part of response message's envelope)
+  //    returned from Droonga Engine.
+  var cachableEndpoints = [
+    '/tables/[^?/]',   // REST API, associated to "search"
+    '/droonga/search', // RAW Droonga command "search"
+    '/d/select'        // Groonga's "select"
+  ];
   var cacheMiddlewareRules = [
-    { regex: /^\// }
+    { regex: new RegExp('^(' + cachableEndpoints.join('|') + ')') }
+    // { regex: /^\// }
   ];
   if (droonga.Cache) {
     var cache = new droonga.Cache({
