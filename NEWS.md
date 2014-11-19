@@ -13,7 +13,7 @@
    to start it as a daemon.
  * The `droonga-http-server-configure` command now shows prompts for all options always.
  * Responses for most commands are never cached.
-   Now, only responses based on `search` or Groonga's `select` commands are cached.
+   Now, only responses based on `search` or Groonga's `select` commands and the administration page are cached.
  * Supports multiple Droonga Engine nodes as its backends.
    Now droonga-http-server can work like a load balancer.
  * The list of connecting Droonga Engine nodes is automatically updated
