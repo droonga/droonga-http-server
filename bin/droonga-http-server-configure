@@ -12,7 +12,8 @@ var chmod    = require('chmod'),
     uid      = require('uid-number'),
     yaml     = require('js-yaml');
 
-var defaultConfigs = require('../lib/default-configs');
+var defaultConfigs = require('../lib/default-configs'),
+    optionUtils    = require('../lib/option-utils');
 
 var serviceUserName    = 'droonga-http-server';
 var serviceGroupName   = 'droonga';
@@ -225,6 +226,25 @@ function setStringOption(name, message) {
   });
 }
 
+function setStringsOption(name, message) {
+  var values = optionUtils.normalizeStringArray(options[name]);
+  return Q.Promise(function(resolve, reject, notify) {
+    if (!options.prompt) {
+      configValues[name] = values;
+      resolve();
+    }
+    else {
+      promptly.prompt(message + ' (comma, vertical bar, or white-space separated) [' + values.join(', ') + ']: ',
+                      { default: values,
+                        retry:   false },
+                      function(error, value) {
+                        configValues[name] = optionUtils.normalizeStringArray(value);
+                        resolve();
+                      });
+    }
+  });
+}
+
 function setIntegerOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
     if (!options.prompt) {
@@ -276,7 +296,7 @@ function tryResetConfigs() {
 
     setIntegerOption('port', 'port')
       .then(function() { return setStringOption('receiveHostName', 'hostname of this node'); })
-      .then(function() { return setStringOption('droongaEngineHostName', 'hostname of the droonga-engine node'); })
+      .then(function() { return setStringsOption('droongaEngineHostNames', 'hostnames of droonga-engine nodes'); })
       .then(function() { return setIntegerOption('droongaEnginePort', 'port number of the droonga-engine node'); })
       .then(function() { return setStringOption('tag', 'tag of the droonga-engine node'); })
       .then(function() { return setStringOption('defaultDataset', 'default dataset'); })
@@ -307,7 +327,7 @@ function writeNewConfigs() {
     configs.environment        = configValues.environment;
 
     var engineConfigs = {};
-    engineConfigs.host            = configValues.droongaEngineHostName;
+    engineConfigs.hosts           = configValues.droongaEngineHostNames;
     engineConfigs.port            = configValues.droongaEnginePort;
     engineConfigs.default_dataset = configValues.defaultDataset;
     engineConfigs.tag             = configValues.tag;

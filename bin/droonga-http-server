@@ -120,7 +120,7 @@ application.droonga({
   server:          server,
   sessionStore:    sessionStore, // this is required to share session information HTTP APIs
   receiveHostName: options.receiveHostName,
-  hostName:        options.droongaEngineHostName,
+  hostNames:       options.droongaEngineHostNames,
   port:            options.droongaEnginePort,
   plugins:         options.plugins,
   serf:            path.resolve(baseDir, 'serf'),
