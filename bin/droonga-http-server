@@ -101,6 +101,7 @@ if (options.cacheSize > 0) {
   //    some information (a part of response message's envelope)
   //    returned from Droonga Engine.
   var cachableEndpoints = [
+    '/$',              // The admin page
     '/tables/[^?/]',   // REST API, associated to "search"
     '/droonga/search', // RAW Droonga command "search"
     '/d/select'        // Groonga's "select"
