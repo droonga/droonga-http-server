@@ -94,7 +94,7 @@ application.use(session({
   store:  sessionStore
 }));
 application.use(responseTime());
-application.use('/', express.static(path.normalize(__dirname + '/../public/groonga-admin')));
+application.use('/', express.static(options.documentRoot));
 if (options.cacheSize > 0) {
   //XXX Activate response cache only for some commands.
   //    In future versions, this restriction should be controlled by
