@@ -1,6 +1,6 @@
 # News
 
-## 1.0.9: 2014-11-29 (planned)
+## 1.0.9: 2014-11-29
 
  * A new `--host` option is available to restrict the listening IP address.
    The default value is `0.0.0.0` (meaning `listen all IP addresses`).
