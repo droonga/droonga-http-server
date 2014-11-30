@@ -1,5 +1,10 @@
 # News
 
+## 1.1.0 2014-12-01
+
+ * Connects to active engine nodes of the cluster of the associated engine node correctly.
+   Previous version unexpectedly kept connections to already unjoined engine nodes.
+
 ## 1.0.9: 2014-11-29
 
  * A new `--host` option is available to restrict the listening IP address.
