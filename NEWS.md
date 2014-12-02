@@ -1,5 +1,9 @@
 # News
 
+## 1.1.1 2014-12-02
+
+ * Fix mismatched dependency about `express-droonga`.
+
 ## 1.1.0 2014-12-01
 
  * Connects to active engine nodes of the cluster of the associated engine node correctly.
