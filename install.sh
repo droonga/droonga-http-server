@@ -247,7 +247,7 @@ use_master_express_droonga() {
     > package.json
 }
 
-install_master() {
+install_from_repository() {
   cd $TEMPDIR
 
   if [ -d $NAME ]
@@ -255,11 +255,13 @@ install_master() {
     cd $NAME
     git reset --hard
     git pull --rebase
+    git checkout $VERSION
     use_master_express_droonga
     npm update
   else
     git clone $REPOSITORY_URL
     cd $NAME
+    git checkout $VERSION
     use_master_express_droonga
   fi
   npm install -g
@@ -268,7 +270,7 @@ install_master() {
 }
 
 download_url() {
-  if [ "$VERSION" = "master" ]; then
+  if [ "$VERSION" != "release" ]; then
     echo "$DOWNLOAD_URL_BASE/master/$1"
   else
     echo "$DOWNLOAD_URL_BASE/v$(installed_version)/$1"
@@ -286,7 +288,7 @@ prepare_environment_in_debian() {
   apt-get update
   apt-get install -y curl nodejs nodejs-legacy npm
 
-  if [ "$VERSION" = "master" ]; then
+  if [ "$VERSION" != "release" ]; then
     apt-get install -y git
   fi
 }
@@ -310,7 +312,7 @@ prepare_environment_in_centos() {
   yum -y install curl
   yum -y --enablerepo=epel install npm
 
-  if [ "$VERSION" = "master" ]; then
+  if [ "$VERSION" != "release" ]; then
     yum -y install git
   fi
 }
@@ -325,9 +327,9 @@ install() {
   prepare_environment_in_$PLATFORM
 
   echo ""
-  if [ "$VERSION" = "master" ]; then
+  if [ "$VERSION" != "release" ]; then
     echo "Installing $NAME from the git repository..."
-    install_master
+    install_from_repository
   else
     echo "Installing $NAME from npmjs.org..."
     npm install -g droonga-http-server
