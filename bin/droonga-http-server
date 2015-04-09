@@ -47,6 +47,8 @@ if (options.systemLogFile && options.systemLogFile != '-') {
   logger.transports.console.level = options.systemLogLevel.toLowerCase();
 }
 
+try {
+
 if (options.pidFile) {
   options.pidFile = path.resolve(baseDir, options.pidFile);
   var fd = fs.openSync(options.pidFile, 'w', 0644);
@@ -189,3 +191,9 @@ process.on('SIGTERM', function() {
   logger.info('Received a SIGTERM signal. Shutting down the server...');
   shutdown();
 });
+
+}
+catch(error) {
+  if (error)
+    logger.error(error);
+}
