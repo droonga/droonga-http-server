@@ -170,6 +170,11 @@ function shutdown(error) {
     fs.unlinkSync(options.pidFile);
 }
 
+process.on('SIGHUP', function() {
+  logger.info('Received a SIGHUP signal. Shutting down the server...');
+  shutdown();
+});
+
 process.on('SIGINT', function() {
   logger.info('Received a SIGINT signal. Shutting down the server...');
   shutdown();
