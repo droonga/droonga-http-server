@@ -171,9 +171,11 @@ function shutdown(error) {
 }
 
 process.on('SIGINT', function() {
+  logger.info('Received a SIGINT signal. Shutting down the server...');
   shutdown();
 });
 
 process.on('SIGTERM', function() {
+  logger.info('Received a SIGTERM signal. Shutting down the server...');
   shutdown();
 });
