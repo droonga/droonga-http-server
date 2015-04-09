@@ -25,6 +25,9 @@ if (options.daemon) {
 
 
 var logger;
+var systemLogLevel = options.systemLogLevel.toLowerCase();
+if (systemLogLevel == 'trace')
+  systemLogLevel = 'silly';
 if (options.systemLogFile && options.systemLogFile != '-') {
   options.systemLogFile = path.resolve(baseDir, options.systemLogFile);
   logger = new winston.Logger({
@@ -35,7 +38,7 @@ if (options.systemLogFile && options.systemLogFile != '-') {
       })
     ]
   });
-  logger.transports.file.level = options.systemLogLevel.toLowerCase();
+  logger.transports.file.level = systemLogLevel;
 } else {
   var transports = [];
   if (!options.daemon) {
@@ -44,7 +47,7 @@ if (options.systemLogFile && options.systemLogFile != '-') {
   logger = new winston.Logger({
     transports: transports
   });
-  logger.transports.console.level = options.systemLogLevel.toLowerCase();
+  logger.transports.console.level = systemLogLevel;
 }
 // simulate Ruby compatible log level
 logger.trace = logger.silly;
