@@ -160,14 +160,19 @@ function shutdown(error) {
   }
 
   try {
+    logger.trace('Trying to close the server: start');
     server.close();
+    logger.trace('Trying to close the server: done');
   } catch(error) {
-    logger.error('Unexpected error on closing of the server.');
+    logger.error('Trying to close the server: failed');
     logger.error(error);
   }
 
-  if (options.pidFile && fs.existsSync(options.pidFile))
+  if (options.pidFile && fs.existsSync(options.pidFile)) {
+    logger.trace('Removing the PID file: start');
     fs.unlinkSync(options.pidFile);
+    logger.trace('Removing the PID file: done');
+  }
 }
 
 process.on('SIGHUP', function() {
