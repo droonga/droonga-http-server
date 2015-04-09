@@ -46,6 +46,8 @@ if (options.systemLogFile && options.systemLogFile != '-') {
   });
   logger.transports.console.level = options.systemLogLevel.toLowerCase();
 }
+// simulate Ruby compatible log level
+logger.trace = logger.silly;
 
 try {
 
