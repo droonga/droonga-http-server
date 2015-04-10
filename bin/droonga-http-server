@@ -182,10 +182,11 @@ function shutdown(error) {
   }
 }
 
+/*
 process.on('SIGHUP', function() {
-  logger.info('Received a SIGHUP signal. Shutting down the server...');
-  shutdown();
+  //TODO: We should do something to reload new settings without restarting...
 });
+*/
 
 process.on('SIGINT', function() {
   logger.info('Received a SIGINT signal. Shutting down the server...');
