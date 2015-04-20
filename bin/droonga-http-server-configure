@@ -358,6 +358,7 @@ function writeNewConfigs() {
     engineConfigs.hosts           = configValues.droongaEngineHostNames;
     engineConfigs.port            = configValues.droongaEnginePort;
     engineConfigs.default_dataset = configValues.defaultDataset;
+    engineConfigs.default_timeout = configValues.defaultTimeout;
     engineConfigs.tag             = configValues.tag;
     engineConfigs.receive_host    = configValues.receiveHostName;
     configs.engine = engineConfigs;
