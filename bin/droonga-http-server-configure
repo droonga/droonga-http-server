@@ -266,6 +266,27 @@ function setIntegerOption(name, message) {
   });
 }
 
+function setFloatOption(name, message) {
+  return Q.Promise(function(resolve, reject, notify) {
+    if (!options.prompt) {
+      configValues[name] = options[name];
+      resolve();
+    }
+    else {
+      promptly.prompt(message + ' [' + options[name] + ']: ',
+                      { default: options[name],
+                        retry:   false },
+                      function(error, value) {
+                        value = parseFloat(value);
+                        if (isNaN(value))
+                          value = options[name];
+                        configValues[name] = value;
+                        resolve();
+                      });
+    }
+  });
+}
+
 function setBooleanOption(name, message) {
   return Q.Promise(function(resolve, reject, notify) {
     if (!options.prompt) {
@@ -301,6 +322,7 @@ function tryResetConfigs() {
       .then(function() { return setIntegerOption('droongaEnginePort', 'port number of the droonga-engine node'); })
       .then(function() { return setStringOption('tag', 'tag of the droonga-engine node'); })
       .then(function() { return setStringOption('defaultDataset', 'default dataset'); })
+      .then(function() { return setFloatOption('defaultTimeout', 'timeout for unresponsive connections (in seconds)'); })
       .then(function() { return setStringOption('accessLogFile', 'path to the access log file'); })
       .then(function() { return setStringOption('systemLogFile', 'path to the system log file'); })
       .then(function() { return setStringOption('systemLogLevel',
