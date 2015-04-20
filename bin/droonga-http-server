@@ -141,6 +141,7 @@ application.droonga({
   prefix:          '',
   logger:          logger,
   defaultDataset:  options.defaultDataset,
+  defaultTimeout:  options.defaultTimeout,
   tag:             options.tag,
   server:          server,
   sessionStore:    sessionStore, // this is required to share session information HTTP APIs
