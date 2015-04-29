@@ -1,6 +1,6 @@
 # News
 
-## 1.1.2 2015-04-29 (planned)
+## 1.1.2 2015-04-29
 
  * Bump required version of `express-droonga`.
 
