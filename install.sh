@@ -348,7 +348,7 @@ install() {
     install_from_repository
   else
     echo "Installing $NAME from npmjs.org..."
-    npm install -g droonga-http-server
+    install_from_npm
   fi
 
   if ! exist_command droonga-http-server; then
