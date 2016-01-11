@@ -295,7 +295,7 @@ installed_version() {
 # ====================== for Debian/Ubuntu ==========================
 prepare_environment_in_debian() {
   apt-get update
-  apt-get install -y curl nodejs nodejs-legacy npm
+  apt-get install -y curl
 
   if [ "$VERSION" != "release" ]; then
     apt-get install -y git
@@ -319,7 +319,6 @@ prepare_environment_in_centos() {
 
   yum -y --enablerepo=epel makecache
   yum -y install curl
-  yum -y --enablerepo=epel install npm
 
   if [ "$VERSION" != "release" ]; then
     yum -y install git
