@@ -381,8 +381,7 @@ install() {
 
   echo ""
   echo "Registering $NAME as a service..."
-  # this function is defined by the downloaded "functions.sh"!
-  register_service $NAME $USER $GROUP
+  register_service
 
   echo ""
   echo "Successfully installed $NAME."
