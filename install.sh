@@ -343,6 +343,8 @@ install() {
 
   prepare_user
 
+  install_nodejs
+
   echo ""
   if [ "$VERSION" != "release" ]; then
     echo "Installing $NAME from the git repository..."
