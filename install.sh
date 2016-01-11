@@ -120,6 +120,13 @@ prepare_user() {
   return 0
 }
 
+run_as_user() {
+  sudo -u $USER /bin/bash -c "
+  export PATH=$NODEJS_BASE_DIR/bin:$PATH
+  $1
+  "
+}
+
 install_nodejs() {
   echo "Installing Node.js $NODE_VERSION $NODE_ARCH..."
   mkdir $NODEJS_BASE_DIR
