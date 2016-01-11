@@ -295,7 +295,7 @@ installed_version() {
 # ====================== for Debian/Ubuntu ==========================
 prepare_environment_in_debian() {
   apt-get update
-  apt-get install -y curl
+  apt-get install -y curl sudo
 
   if [ "$VERSION" != "release" ]; then
     apt-get install -y git
@@ -318,7 +318,7 @@ prepare_environment_in_centos() {
   fi
 
   yum -y --enablerepo=epel makecache
-  yum -y install curl
+  yum -y install curl sudo
 
   if [ "$VERSION" != "release" ]; then
     yum -y install git
