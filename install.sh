@@ -351,7 +351,7 @@ install() {
     install_from_npm
   fi
 
-  if ! exist_command droonga-http-server; then
+  if ! exist_command $NODEJS_BASE_DIR/bin/droonga-http-server; then
     echo "ERROR: Failed to install $NAME!"
     exit 1
   fi
