@@ -122,6 +122,7 @@ prepare_user() {
 
 run_as_user() {
   sudo -u $USER /bin/bash -c "
+  export HOME=/home/$USER
   export PATH=$NODEJS_BASE_DIR/bin:$PATH
   $1
   "
