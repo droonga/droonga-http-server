@@ -313,7 +313,17 @@ installed_version() {
   $NAME --version
 }
 
+register_service() {
+  local unit=$NAME.service
 
+  curl -s -o /usr/lib/systemd/system/$unit $(download_url "install/$unit")
+  if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to download systemd unit file!"
+    exit 1
+  fi
+
+  /usr/bin/systemctl enable $unit
+}
 
 # ====================== for Debian/Ubuntu ==========================
 prepare_environment_in_debian() {
