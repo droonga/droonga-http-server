@@ -119,6 +119,13 @@ prepare_user() {
   return 0
 }
 
+install_nodejs() {
+  echo "Installing Node.js $NODE_VERSION $NODE_ARCH..."
+  mkdir $NODEJS_BASE_DIR
+  curl $NODEJS_DOWNLOAD_URL | tar -xz --strip-components 1 -C $NODEJS_BASE_DIR
+  chown -R $USER:$GROUP $NODEJS_BASE_DIR
+}
+
 detect_engine_config() {
   local config_key=$1
   local config_value=""
