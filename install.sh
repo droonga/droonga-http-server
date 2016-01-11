@@ -280,14 +280,22 @@ install_from_repository() {
     git pull --rebase
     git checkout $VERSION
     use_master_express_droonga
+    chown -R $USER .
+    sudo -u $USER /bin/bash -c "
+    export PATH=$NODEJS_BASE_DIR/bin:$PATH
     npm update
+    "
   else
     git clone $REPOSITORY_URL
     cd $NAME
     git checkout $VERSION
     use_master_express_droonga
   fi
+  chown -R $USER .
+  sudo -u $USER /bin/bash -c "
+  export PATH=$NODEJS_BASE_DIR/bin:$PATH
   npm install -g
+  "
   rm package.json
   mv package.json.bak package.json
 }
