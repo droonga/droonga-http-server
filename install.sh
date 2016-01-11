@@ -263,6 +263,13 @@ use_master_express_droonga() {
     > package.json
 }
 
+install_from_npm() {
+  sudo -u $USER /bin/bash -c "
+  export PATH=$NODEJS_BASE_DIR/bin:$PATH
+  npm install -g droonga-http-server
+  "
+}
+
 install_from_repository() {
   cd $TEMPDIR
 
