@@ -334,6 +334,8 @@ install() {
   echo "Preparing the environment..."
   prepare_environment_in_$PLATFORM
 
+  prepare_user
+
   echo ""
   if [ "$VERSION" != "release" ]; then
     echo "Installing $NAME from the git repository..."
@@ -357,8 +359,6 @@ install() {
     echo "ERROR: Downloaded post-installation script is broken!"
     exit 1
   fi
-
-  prepare_user
 
   setup_configuration_directory
 
