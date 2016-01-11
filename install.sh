@@ -329,7 +329,7 @@ register_service() {
 # ====================== for Debian/Ubuntu ==========================
 prepare_environment_in_debian() {
   apt-get update
-  apt-get install -y curl sudo
+  apt-get install -y curl sudo build-essential
 
   if [ "$VERSION" != "release" ]; then
     apt-get install -y git
