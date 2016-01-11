@@ -49,6 +49,15 @@ EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#mast
 : ${ENGINE_HOST:=Auto Detect}
 : ${ENGINE_PORT:=Auto Detect}
 
+NODEJS_BASE_DIR=/home/$USER/node
+NODEJS_BASE_URL=https://nodejs.org/download/release
+
+: ${NODEJS_VERSION:=v0.12.9}
+: ${NODEJS_OS:=linux}
+: ${NODEJS_ARCH:=x64}
+
+NODEJS_DOWNLOAD_URL=$NODEJS_BASE_URL/$NODEJS_VERSION/node-$NODEJS_VERSION-$NODEJS_OS-$NODEJS_ARCH.tar.gz
+
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
   *)                   sed="sed -r" ;;
