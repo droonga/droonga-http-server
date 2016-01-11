@@ -314,17 +314,7 @@ prepare_environment_in_debian() {
 
 # ========================= for CentOS 7 ============================
 prepare_environment_in_centos() {
-  if ! exist_yum_repository epel; then
-    yum -y install epel-release
-    # disable it by default!
-    epel_repo=/etc/yum.repos.d/epel.repo
-    backup=/tmp/$(basename $epel_repo).bak
-    mv $epel_repo $backup
-    cat $backup | $sed -e "s/enabled=1/enabled=0/" \
-      > $epel_repo
-  fi
-
-  yum -y --enablerepo=epel makecache
+  yum -y makecache
   yum -y install curl sudo
 
   if [ "$VERSION" != "release" ]; then
