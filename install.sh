@@ -50,6 +50,7 @@ EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#mast
 : ${ENGINE_PORT:=Auto Detect}
 
 NODEJS_BASE_DIR=/home/$USER/node
+NODEJS_COMMAND=$NODEJS_BASE_DIR/bin/node
 NODEJS_BASE_URL=https://nodejs.org/download/release
 
 : ${NODEJS_VERSION:=v0.12.9}
