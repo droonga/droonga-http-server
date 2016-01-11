@@ -349,7 +349,9 @@ install() {
 
   prepare_user
 
-  install_nodejs
+  if [ ! -e $NODEJS_COMMAND ] || [ $($NODEJS_COMMAND --version) != "$NODEJS_VERSION" ]; then
+    install_nodejs
+  fi
 
   echo ""
   if [ "$VERSION" != "release" ]; then
