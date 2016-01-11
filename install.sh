@@ -213,8 +213,7 @@ setup_configuration_directory() {
     fi
 
     # we should use --no-prompt instead of --quiet, for droonga-http-server 1.0.9 and later.
-    sudo -u $USER /bin/bash -c "
-    export PATH=$NODEJS_BASE_DIR/bin:$PATH
+    run_as_user "
     droonga-http-server-configure --quiet \
                                   --droonga-engine-host-name=$ENGINE_HOST \
                                   --droonga-engine-port=$ENGINE_PORT \
@@ -275,10 +274,7 @@ use_master_express_droonga() {
 }
 
 install_from_npm() {
-  sudo -u $USER /bin/bash -c "
-  export PATH=$NODEJS_BASE_DIR/bin:$PATH
-  npm install -g droonga-http-server
-  "
+  run_as_user "npm install -g droonga-http-server"
 }
 
 install_from_repository() {
@@ -292,10 +288,7 @@ install_from_repository() {
     git checkout $VERSION
     use_master_express_droonga
     chown -R $USER .
-    sudo -u $USER /bin/bash -c "
-    export PATH=$NODEJS_BASE_DIR/bin:$PATH
-    npm update
-    "
+    run_as_user "npm update"
   else
     git clone $REPOSITORY_URL
     cd $NAME
@@ -303,10 +296,7 @@ install_from_repository() {
     use_master_express_droonga
   fi
   chown -R $USER .
-  sudo -u $USER /bin/bash -c "
-  export PATH=$NODEJS_BASE_DIR/bin:$PATH
-  npm install -g
-  "
+  run_as_user "npm install -g"
   rm package.json
   mv package.json.bak package.json
 }
