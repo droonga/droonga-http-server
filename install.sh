@@ -323,7 +323,7 @@ register_service() {
     exit 1
   fi
 
-  /usr/bin/systemctl enable $unit
+  systemctl enable $unit
 }
 
 # ====================== for Debian/Ubuntu ==========================
