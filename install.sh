@@ -317,7 +317,7 @@ installed_version() {
 register_service() {
   local unit=$NAME.service
 
-  curl -s -o /usr/lib/systemd/system/$unit $(download_url "install/$unit")
+  curl -s -o /etc/systemd/system/$unit $(download_url "install/$unit")
   if [ $? -ne 0 ]; then
     echo "ERROR: Failed to download systemd unit file!"
     exit 1
