@@ -215,7 +215,7 @@ setup_configuration_directory() {
                                   --receive-host-name=$HOST \
                                   --port=$PORT
     if [ $? -ne 0 ]; then
-      echo \"ERROR: Failed to configure $NAME!\"
+      echo "ERROR: Failed to configure $NAME!"
       exit 1
     fi
   fi
