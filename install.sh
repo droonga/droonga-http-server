@@ -271,7 +271,7 @@ use_master_express_droonga() {
 }
 
 install_from_npm() {
-  run_as_user "npm install -g droonga-http-server"
+  run_as_user npm install -g droonga-http-server
 }
 
 install_from_repository() {
@@ -285,7 +285,7 @@ install_from_repository() {
     git checkout $VERSION
     use_master_express_droonga
     chown -R $USER .
-    run_as_user "npm update"
+    run_as_user npm update
   else
     git clone $REPOSITORY_URL
     cd $NAME
@@ -293,7 +293,7 @@ install_from_repository() {
     use_master_express_droonga
   fi
   chown -R $USER .
-  run_as_user "npm install -g"
+  run_as_user npm install -g
   rm package.json
   mv package.json.bak package.json
 }
