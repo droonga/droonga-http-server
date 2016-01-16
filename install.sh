@@ -49,6 +49,16 @@ EXPRESS_DROONGA_REPOSITORY_URL=git://github.com/droonga/express-droonga.git#mast
 : ${ENGINE_HOST:=Auto Detect}
 : ${ENGINE_PORT:=Auto Detect}
 
+NODEJS_BASE_DIR=/home/$USER/node
+NODEJS_COMMAND=$NODEJS_BASE_DIR/bin/node
+NODEJS_BASE_URL=https://nodejs.org/download/release
+
+: ${NODEJS_VERSION:=v0.12.9}
+: ${NODEJS_OS:=linux}
+: ${NODEJS_ARCH:=x64}
+
+NODEJS_DOWNLOAD_URL=$NODEJS_BASE_URL/$NODEJS_VERSION/node-$NODEJS_VERSION-$NODEJS_OS-$NODEJS_ARCH.tar.gz
+
 case $(uname) in
   Darwin|*BSD|CYGWIN*) sed="sed -E" ;;
   *)                   sed="sed -r" ;;
@@ -108,6 +118,16 @@ prepare_user() {
 
   usermod -G $GROUP $USER
   return 0
+}
+
+run_as_user() {
+  sudo -u $USER -H env PATH="$NODEJS_BASE_DIR/bin:$PATH" "$@"
+}
+
+install_nodejs() {
+  echo "Installing Node.js $NODE_VERSION $NODE_ARCH..."
+  run_as_user mkdir $NODEJS_BASE_DIR
+  curl $NODEJS_DOWNLOAD_URL | run_as_user tar -xz --strip-components 1 -C "$NODEJS_BASE_DIR"
 }
 
 detect_engine_config() {
@@ -189,7 +209,7 @@ setup_configuration_directory() {
     fi
 
     # we should use --no-prompt instead of --quiet, for droonga-http-server 1.0.9 and later.
-    droonga-http-server-configure --quiet \
+    run_as_user droonga-http-server-configure --quiet \
                                   --droonga-engine-host-name=$ENGINE_HOST \
                                   --droonga-engine-port=$ENGINE_PORT \
                                   --receive-host-name=$HOST \
@@ -247,6 +267,10 @@ use_master_express_droonga() {
     > package.json
 }
 
+install_from_npm() {
+  run_as_user npm install -g droonga-http-server
+}
+
 install_from_repository() {
   cd $TEMPDIR
 
@@ -257,14 +281,16 @@ install_from_repository() {
     git pull --rebase
     git checkout $VERSION
     use_master_express_droonga
-    npm update
+    chown -R $USER .
+    run_as_user npm update
   else
     git clone $REPOSITORY_URL
     cd $NAME
     git checkout $VERSION
     use_master_express_droonga
   fi
-  npm install -g
+  chown -R $USER .
+  run_as_user npm install -g
   rm package.json
   mv package.json.bak package.json
 }
@@ -281,12 +307,22 @@ installed_version() {
   $NAME --version
 }
 
+register_service() {
+  local unit=$NAME.service
 
+  curl -s -o /etc/systemd/system/$unit $(download_url "install/$unit")
+  if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to download systemd unit file!"
+    exit 1
+  fi
+
+  systemctl enable $unit
+}
 
 # ====================== for Debian/Ubuntu ==========================
 prepare_environment_in_debian() {
   apt-get update
-  apt-get install -y curl nodejs nodejs-legacy npm
+  apt-get install -y curl sudo build-essential python
 
   if [ "$VERSION" != "release" ]; then
     apt-get install -y git
@@ -298,19 +334,8 @@ prepare_environment_in_debian() {
 
 # ========================= for CentOS 7 ============================
 prepare_environment_in_centos() {
-  if ! exist_yum_repository epel; then
-    yum -y install epel-release
-    # disable it by default!
-    epel_repo=/etc/yum.repos.d/epel.repo
-    backup=/tmp/$(basename $epel_repo).bak
-    mv $epel_repo $backup
-    cat $backup | $sed -e "s/enabled=1/enabled=0/" \
-      > $epel_repo
-  fi
-
-  yum -y --enablerepo=epel makecache
-  yum -y install curl
-  yum -y --enablerepo=epel install npm
+  yum -y makecache
+  yum -y install curl sudo
 
   if [ "$VERSION" != "release" ]; then
     yum -y install git
@@ -326,38 +351,31 @@ install() {
   echo "Preparing the environment..."
   prepare_environment_in_$PLATFORM
 
+  prepare_user
+
+  if [ ! -e $NODEJS_COMMAND ] || [ $($NODEJS_COMMAND --version) != "$NODEJS_VERSION" ]; then
+    install_nodejs
+  fi
+
   echo ""
   if [ "$VERSION" != "release" ]; then
     echo "Installing $NAME from the git repository..."
     install_from_repository
   else
     echo "Installing $NAME from npmjs.org..."
-    npm install -g droonga-http-server
+    install_from_npm
   fi
 
-  if ! exist_command droonga-http-server; then
+  if ! exist_command $NODEJS_BASE_DIR/bin/droonga-http-server; then
     echo "ERROR: Failed to install $NAME!"
     exit 1
   fi
-
-  curl -s -o $TEMPDIR/functions.sh $(download_url "install/$PLATFORM/functions.sh")
-  if ! source $TEMPDIR/functions.sh; then
-    echo "ERROR: Failed to download post-installation script!"
-    exit 1
-  fi
-  if ! exist_command register_service; then
-    echo "ERROR: Downloaded post-installation script is broken!"
-    exit 1
-  fi
-
-  prepare_user
 
   setup_configuration_directory
 
   echo ""
   echo "Registering $NAME as a service..."
-  # this function is defined by the downloaded "functions.sh"!
-  register_service $NAME $USER $GROUP
+  register_service
 
   echo ""
   echo "Successfully installed $NAME."
