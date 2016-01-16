@@ -209,8 +209,7 @@ setup_configuration_directory() {
     fi
 
     # we should use --no-prompt instead of --quiet, for droonga-http-server 1.0.9 and later.
-    run_as_user "
-    droonga-http-server-configure --quiet \
+    run_as_user droonga-http-server-configure --quiet \
                                   --droonga-engine-host-name=$ENGINE_HOST \
                                   --droonga-engine-port=$ENGINE_PORT \
                                   --receive-host-name=$HOST \
@@ -219,7 +218,6 @@ setup_configuration_directory() {
       echo \"ERROR: Failed to configure $NAME!\"
       exit 1
     fi
-    "
   fi
 
   chown -R $USER:$GROUP $DROONGA_BASE_DIR
