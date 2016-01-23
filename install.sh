@@ -304,7 +304,7 @@ download_url() {
 }
 
 installed_version() {
-  $NAME --version
+  run_as_user $NAME --version
 }
 
 register_service() {
